@@ -34,6 +34,12 @@ def test_extract_client_ip_accepts_public_ipv6_address():
     assert geo_service.extract_client_ip({}, address, False) == address
 
 
+def test_extract_client_ip_accepts_trusted_forwarded_ipv6_address():
+    address = "2606:4700:4700::1111"
+    headers = {"x-forwarded-for": f"{address}, ::1"}
+    assert geo_service.extract_client_ip(headers, "127.0.0.1", True) == address
+
+
 def test_extract_client_ip_rejects_non_public_and_invalid_addresses():
     for candidate in (
         "127.0.0.1",

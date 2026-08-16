@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Optional
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -13,19 +13,22 @@ class Settings(BaseSettings):
     # shells and build runners. Use IMPULSE_DEBUG when this flag is needed.
     IMPULSE_DEBUG: bool = True
     DATABASE_URL: str = "sqlite:///./impulse.db"
+    SQLITE_BUSY_TIMEOUT_MS: int = 30000
     
     # External catalog sync configuration. Public read access to Open Food
     # Facts, Wikidata, Wikimedia Commons, and Frankfurter is keyless.
     ICECAT_API_ACCESS_TOKEN: Optional[str] = None
     ICECAT_CONTENT_ACCESS_TOKEN: Optional[str] = None
     ICECAT_INDEX_URL: str = "https://data.icecat.biz/export/freexml/EN/files.index.csv.gz"
-    ICECAT_TARGET_PRODUCTS: int = 306
+    ICECAT_TARGET_PRODUCTS: int = 5000
+    ICECAT_CANDIDATE_BUFFER_PERCENT: int = 20
     ICECAT_CONCURRENCY: int = 3
     FRANKFURTER_API_BASE: str = "https://api.frankfurter.dev/v2"
     OPENFOODFACTS_API_BASE: str = "https://world.openfoodfacts.org/api/v2"
     OPENFOODFACTS_COUNTRIES: str = "US,IN,GB,JP,DE,FR,CA,AU,MX,BR,SG,AE,LK,NP,BD"
     OPENFOODFACTS_PRODUCTS_PER_COUNTRY: int = 50
     OPENFOODFACTS_MIN_INTERVAL_SECONDS: float = 6.1
+    ENABLE_LAZY_COUNTRY_SYNC: bool = False
     WIKIDATA_SPARQL_ENDPOINT: str = "https://query.wikidata.org/sparql"
     WIKIMEDIA_API_ENDPOINT: str = "https://commons.wikimedia.org/w/api.php"
     EXTERNAL_API_CONTACT: str = "https://github.com/rshukla2/Impulse-FakeShoppingSimulator"
@@ -50,11 +53,23 @@ class Settings(BaseSettings):
         "ICECAT_CONTENT_ACCESS_TOKEN",
         "MAXMIND_ACCOUNT_ID",
         "MAXMIND_LICENSE_KEY",
+        "CORS_ALLOWED_ORIGIN_REGEX",
         mode="before",
     )
     @classmethod
     def blank_secret_is_none(cls, value):
-        return None if value == "" else value
+        return None if value is None or str(value).strip() == "" else value
+
+    @model_validator(mode="after")
+    def validate_production_safety(self):
+        if self.ENVIRONMENT.lower() == "production":
+            if self.IMPULSE_DEBUG:
+                raise ValueError("IMPULSE_DEBUG must be false in production")
+            if "*" in self.cors_allowed_origins:
+                raise ValueError("Wildcard CORS origins are not allowed in production")
+            if self.ENABLE_LAZY_COUNTRY_SYNC:
+                raise ValueError("ENABLE_LAZY_COUNTRY_SYNC must be false in production")
+        return self
 
     @property
     def openfoodfacts_country_codes(self) -> List[str]:

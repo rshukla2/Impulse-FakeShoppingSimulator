@@ -17,9 +17,9 @@ router = APIRouter(prefix="/shopping", tags=["shopping"])
 @router.get("", response_model=ProductListResponse)
 def get_shopping_products(
     request: Request,
-    country: Optional[str] = Query(None),
-    category: Optional[str] = Query(None),
-    search: Optional[str] = Query(None),
+    country: Optional[str] = Query(None, min_length=2, max_length=2, pattern=r"^[A-Za-z]{2}$"),
+    category: Optional[str] = Query(None, max_length=128),
+    search: Optional[str] = Query(None, max_length=100),
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db)
@@ -89,7 +89,7 @@ def get_shopping_products(
 def get_shopping_product_by_id(
     id: str,
     request: Request,
-    country: Optional[str] = Query(None),
+    country: Optional[str] = Query(None, min_length=2, max_length=2, pattern=r"^[A-Za-z]{2}$"),
     db: Session = Depends(get_db)
 ):
     geo = detect_country_from_request(request, override_country=country)

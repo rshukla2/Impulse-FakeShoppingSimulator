@@ -1,15 +1,47 @@
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
+from backend.app.database import Base, get_db
 from backend.app.main import app
+from backend.app.models import ProductModel
+from backend.app.services.seed_service import seed_database_if_empty
 
 
 @pytest.fixture(scope="module")
 def client():
-    # Entering the context runs FastAPI's lifespan, including the same database
-    # seeding used in local development and production startup.
-    with TestClient(app) as test_client:
+    # Route tests must prove a clean checkout works without relying on the
+    # developer's ignored impulse.db cache.
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(engine)
+    test_session = sessionmaker(bind=engine)
+    db = test_session()
+    try:
+        seed_database_if_empty(db)
+    finally:
+        db.close()
+
+    def override_get_db():
+        session = test_session()
+        try:
+            yield session
+        finally:
+            session.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+    test_client = TestClient(app)
+    try:
         yield test_client
+    finally:
+        test_client.close()
+        app.dependency_overrides.clear()
+        engine.dispose()
 
 
 def test_health_endpoint(client):
@@ -17,9 +49,19 @@ def test_health_endpoint(client):
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "healthy"
+    assert data["database"] == "ok"
     assert data["payment_integrated"] is False
     assert set(data["providers"]) == {"frankfurter", "icecat", "openfoodfacts", "wikidata"}
     assert "api_key" not in response.text.lower()
+
+
+def test_clean_checkout_has_complete_tracked_seed_catalog(client):
+    response = client.get("/health")
+    assert response.json()["catalog_counts"] == {
+        "shopping": 45,
+        "grocery": 20,
+        "food": 10,
+    }
 
 def test_cors_allows_flutter_web_localhost_random_port(client):
     response = client.options(
@@ -28,6 +70,12 @@ def test_cors_allows_flutter_web_localhost_random_port(client):
     )
     assert response.status_code == 200
     assert response.headers["access-control-allow-origin"] == "http://localhost:54321"
+
+
+def test_catalog_query_validation_bounds_public_inputs(client):
+    assert client.get("/shopping?limit=101").status_code == 422
+    assert client.get("/shopping?country=INVALID").status_code == 422
+    assert client.get(f"/search?q={'x' * 101}").status_code == 422
 
 def test_bootstrap_endpoint_default(client):
     response = client.get("/bootstrap")

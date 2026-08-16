@@ -1,0 +1,68 @@
+[
+  {
+    "id": "rest_001",
+    "name": "Curry Theory",
+    "cuisine": "North Indian",
+    "tagline": "Slow-cooked artisanal gravies & clay-oven tandoor delights",
+    "image_url": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&auto=format&fit=crop&q=80",
+    "rating": 4.8,
+    "review_count": 2840,
+    "country_relevance": "IN,GLOBAL",
+    "price_level": "$$"
+  },
+  {
+    "id": "rest_002",
+    "name": "Dosa District",
+    "cuisine": "South Indian",
+    "tagline": "Ghee roast crisps, steamed idlis & filter kaapi",
+    "image_url": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=800&auto=format&fit=crop&q=80",
+    "rating": 4.9,
+    "review_count": 3410,
+    "country_relevance": "IN,GLOBAL",
+    "price_level": "$"
+  },
+  {
+    "id": "rest_003",
+    "name": "Tokyo Bowl Co.",
+    "cuisine": "Japanese",
+    "tagline": "Hand-pulled ramen, sashimi bowls & crispy gyoza",
+    "image_url": "https://images.unsplash.com/photo-1552611052-33e04de081de?w=800&auto=format&fit=crop&q=80",
+    "rating": 4.9,
+    "review_count": 4120,
+    "country_relevance": "JP,US,GLOBAL",
+    "price_level": "$$"
+  },
+  {
+    "id": "rest_004",
+    "name": "Pasta Department",
+    "cuisine": "Italian",
+    "tagline": "Handmade fettuccine, truffle ravioli & brick oven sourdough pizza",
+    "image_url": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800&auto=format&fit=crop&q=80",
+    "rating": 4.7,
+    "review_count": 1980,
+    "country_relevance": "US,GB,DE,GLOBAL",
+    "price_level": "$$"
+  },
+  {
+    "id": "rest_005",
+    "name": "Burger Assembly",
+    "cuisine": "American",
+    "tagline": "Smashed double patties, brioche buns & truffle parmesan fries",
+    "image_url": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&auto=format&fit=crop&q=80",
+    "rating": 4.6,
+    "review_count": 5120,
+    "country_relevance": "US,GB,GLOBAL",
+    "price_level": "$$"
+  },
+  {
+    "id": "rest_006",
+    "name": "Taco Laboratory",
+    "cuisine": "Mexican",
+    "tagline": "Birria quesatacos, charred carnitas & hand-pressed corn tortillas",
+    "image_url": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&auto=format&fit=crop&q=80",
+    "rating": 4.8,
+    "review_count": 3290,
+    "country_relevance": "MX,US,GLOBAL",
+    "price_level": "$"
+  }
+]

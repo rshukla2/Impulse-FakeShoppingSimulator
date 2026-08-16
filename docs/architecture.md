@@ -53,8 +53,8 @@ Request
   → /bootstrap response
 ```
 
-Forwarding headers are ignored unless `TRUST_PROXY_HEADERS=true`. The future
-nginx configuration must overwrite forwarded headers and Uvicorn must remain
+Forwarding headers are ignored unless `TRUST_PROXY_HEADERS=true`. The production
+nginx configuration overwrites forwarded headers and Uvicorn remains
 bound to loopback with raw-IP access logging disabled or suitably redacted. Raw
 IP addresses are neither stored nor included in application log messages.
 
@@ -73,9 +73,9 @@ Frankfurter ──────────┘
 
 API startup performs additive schema migration and local seed import only. The
 external providers are refreshed through `scripts/sync_all.py`; failed or empty
-refreshes retain the last usable cache. Open Food Facts also has a persistent,
-deduplicated lazy refresh for newly detected countries. Provider requests use
-bounded retries, throttling, timeouts, and identifiable User-Agent headers.
+refreshes retain the last usable cache. Production refreshes are scheduled
+maintenance jobs rather than user-triggered work. Provider requests use bounded
+retries, throttling, timeouts, and identifiable User-Agent headers.
 
 ## Catalog preservation
 
@@ -86,7 +86,7 @@ fallbacks. Fictional products are maintained separately. The two conflicting
 archived fictional records use `fake_ai_004` and `fake_ai_005`, preserving the
 32 existing IDs and both original variants.
 
-## Target deployment (not implemented yet)
+## Production deployment assets
 
 ```text
 Flutter web
@@ -99,6 +99,8 @@ Flutter web
   → SQLite and external catalog/data sources
 ```
 
-iOS and Android use the same HTTPS FastAPI endpoint. Live deployment, DNS,
-certificates, GitHub Actions, nginx configuration, and systemd units are
-explicitly deferred.
+iOS and Android use the same HTTPS FastAPI endpoint. GitHub Actions, nginx,
+systemd services/timers, SQLite backup, and short-lived Let's Encrypt IP
+certificate automation are implemented as repository configuration. They take
+effect only after an operator provisions GitHub Pages and the DigitalOcean
+Droplet; no cloud resource is created from a developer machine.

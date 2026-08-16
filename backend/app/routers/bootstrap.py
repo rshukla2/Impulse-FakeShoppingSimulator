@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Request, Query
 from sqlalchemy.orm import Session
+from typing import Optional
 from backend.app.database import get_db
 from backend.app.schemas import BootstrapResponse
 from backend.app.services.geo_service import detect_country_from_request, get_supported_countries
@@ -10,7 +11,13 @@ router = APIRouter(tags=["bootstrap"])
 @router.get("/bootstrap", response_model=BootstrapResponse)
 def get_bootstrap_data(
     request: Request,
-    country: str = Query(None, description="Optional manual country code override"),
+    country: Optional[str] = Query(
+        None,
+        min_length=2,
+        max_length=2,
+        pattern=r"^[A-Za-z]{2}$",
+        description="Optional manual country code override",
+    ),
     db: Session = Depends(get_db)
 ):
     geo = detect_country_from_request(request, override_country=country)

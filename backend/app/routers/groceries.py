@@ -19,9 +19,9 @@ router = APIRouter(prefix="/groceries", tags=["groceries"])
 def get_grocery_products(
     request: Request,
     background_tasks: BackgroundTasks,
-    country: Optional[str] = Query(None),
-    category: Optional[str] = Query(None),
-    search: Optional[str] = Query(None),
+    country: Optional[str] = Query(None, min_length=2, max_length=2, pattern=r"^[A-Za-z]{2}$"),
+    category: Optional[str] = Query(None, max_length=128),
+    search: Optional[str] = Query(None, max_length=100),
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db)
@@ -59,7 +59,12 @@ def get_grocery_products(
         ordered_items = [p for p in all_items if p.country_code == settings.DEFAULT_COUNTRY_CODE] + global_items
 
     has_live_country_cache = any(p.source == "openfoodfacts" for p in country_matches)
-    if country_code not in settings.openfoodfacts_country_codes and not has_live_country_cache and should_queue_country_sync(db, country_code):
+    if (
+        settings.ENABLE_LAZY_COUNTRY_SYNC
+        and country_code not in settings.openfoodfacts_country_codes
+        and not has_live_country_cache
+        and should_queue_country_sync(db, country_code)
+    ):
         background_tasks.add_task(background_sync_country, country_code)
     
     total = len(ordered_items)
@@ -87,7 +92,7 @@ def get_grocery_products(
 def get_grocery_by_id(
     id: str,
     request: Request,
-    country: Optional[str] = Query(None),
+    country: Optional[str] = Query(None, min_length=2, max_length=2, pattern=r"^[A-Za-z]{2}$"),
     db: Session = Depends(get_db)
 ):
     geo = detect_country_from_request(request, override_country=country)

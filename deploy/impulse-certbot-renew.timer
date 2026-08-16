@@ -1,0 +1,11 @@
+[Unit]
+Description=Twice-daily check for the short-lived Let's Encrypt IP certificate
+
+[Timer]
+OnCalendar=*-*-* 00,12:17:00
+Persistent=true
+RandomizedDelaySec=15m
+Unit=impulse-certbot-renew.service
+
+[Install]
+WantedBy=timers.target

@@ -68,6 +68,7 @@ def health_check(db=Depends(get_db)):
     }
     return {
         "status": "healthy",
+        "database": "ok",
         "service": "Impulse Backend",
         "mode": "simulated_shopping_only",
         "payment_integrated": False,

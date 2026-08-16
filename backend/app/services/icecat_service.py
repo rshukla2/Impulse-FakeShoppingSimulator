@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import csv
 import gzip
+import math
 import tempfile
 import xml.etree.ElementTree as ET
 from collections import defaultdict
@@ -117,6 +118,16 @@ def parse_icecat_index(path: Path, target: int) -> List[Dict[str, str]]:
         return select_balanced_index_rows(csv.DictReader(source, dialect=dialect), target)
 
 
+def candidate_target_for(usable_target: int, buffer_percent: int) -> int:
+    """Return enough index candidates to meet a usable-product cache target."""
+    if usable_target < 1:
+        raise ValueError("Icecat target must be at least one product")
+    return max(
+        usable_target,
+        math.ceil(usable_target * (1 + max(0, buffer_percent) / 100)),
+    )
+
+
 def normalize_icecat_xml(content: bytes, fallback: Dict[str, str]) -> Dict[str, Any]:
     root = ET.fromstring(content)
     product = root.find(".//Product") or root
@@ -168,13 +179,17 @@ async def sync_icecat_products(*, client=None, target: Optional[int] = None) -> 
     index_headers = icecat_auth_headers()
     product_headers = icecat_auth_headers(include_content=True)
     target = target or settings.ICECAT_TARGET_PRODUCTS
+    candidate_target = candidate_target_for(
+        target,
+        settings.ICECAT_CANDIDATE_BUFFER_PERCENT,
+    )
     with tempfile.TemporaryDirectory(prefix="impulse-icecat-") as temp_dir:
         index_path = Path(temp_dir) / "files.index.csv.gz"
         async with ExternalHTTPClient("icecat-sync", client) as http:
             await http.download(
                 settings.ICECAT_INDEX_URL, index_path, headers=index_headers
             )
-            rows = parse_icecat_index(index_path, target)
+            rows = parse_icecat_index(index_path, candidate_target)
             if not rows:
                 raise ValueError("Icecat index contained no usable products")
             semaphore = asyncio.Semaphore(max(1, settings.ICECAT_CONCURRENCY))
@@ -196,6 +211,9 @@ async def sync_icecat_products(*, client=None, target: Optional[int] = None) -> 
 
             products = await asyncio.gather(*(detail(row) for row in rows))
     unique = {product["id"]: product for product in products if product.get("name") and product.get("image_url")}
-    if not unique:
-        raise ValueError("Icecat returned no usable product details")
-    return list(unique.values())
+    if len(unique) < target:
+        raise ValueError(
+            f"Icecat returned {len(unique)} usable products; target is {target}. "
+            "Existing cache was retained."
+        )
+    return list(unique.values())[:target]

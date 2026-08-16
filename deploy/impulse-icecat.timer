@@ -1,0 +1,11 @@
+[Unit]
+Description=Twice-weekly Impulse Icecat synchronization
+
+[Timer]
+OnCalendar=Mon,Thu *-*-* 03:15:00
+Persistent=true
+RandomizedDelaySec=20m
+Unit=impulse-sync@icecat.service
+
+[Install]
+WantedBy=timers.target

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Request, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
+from typing import Optional
 
 from backend.app.database import get_db
 from backend.app.models import ProductModel, RestaurantModel
@@ -15,8 +16,8 @@ router = APIRouter(prefix="/search", tags=["search"])
 @router.get("", response_model=SearchResponse)
 def search_all_catalogs(
     request: Request,
-    q: str = Query(..., min_length=1),
-    country: str = Query(None),
+    q: str = Query(..., min_length=1, max_length=100),
+    country: Optional[str] = Query(None, min_length=2, max_length=2, pattern=r"^[A-Za-z]{2}$"),
     db: Session = Depends(get_db)
 ):
     geo = detect_country_from_request(request, override_country=country)

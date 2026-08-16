@@ -1,0 +1,11 @@
+[Unit]
+Description=Weekly Impulse Wikidata and Commons synchronization
+
+[Timer]
+OnCalendar=Sun *-*-* 05:15:00
+Persistent=true
+RandomizedDelaySec=30m
+Unit=impulse-sync@wikidata.service
+
+[Install]
+WantedBy=timers.target

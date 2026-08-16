@@ -54,8 +54,9 @@ by one fictional product when both matching pools are available.
 
 ### `GET /groceries`
 Returns only the detected country's cached products and applicable static
-fallbacks. It never fills a page with unrelated countries. A new country may
-receive safe fallback results while its first cache refresh runs.
+fallbacks. It never fills a page with unrelated countries. Production disables
+lazy provider synchronization: a new country receives safe fallback results
+until a scheduled or manual Open Food Facts job adds its cache.
 
 **Query Parameters**:
 - `country` *(optional)*: Country code (e.g. `IN` prioritizes Indian pantry/dairy/snacks, `US` prioritizes American groceries).

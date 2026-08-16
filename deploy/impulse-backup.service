@@ -1,0 +1,14 @@
+[Unit]
+Description=Back up the Impulse SQLite database
+After=impulse.service
+
+[Service]
+Type=oneshot
+User=impulse
+Group=impulse
+ExecStart=/opt/impulse/scripts/backup_database.sh
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/impulse/storage /opt/impulse/backups

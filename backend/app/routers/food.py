@@ -16,11 +16,11 @@ router = APIRouter(prefix="/food", tags=["food"])
 @router.get("", response_model=ProductListResponse)
 def get_food_dishes(
     request: Request,
-    country: Optional[str] = Query(None),
-    category: Optional[str] = Query(None),
-    cuisine: Optional[str] = Query(None),
-    restaurant_id: Optional[str] = Query(None),
-    search: Optional[str] = Query(None),
+    country: Optional[str] = Query(None, min_length=2, max_length=2, pattern=r"^[A-Za-z]{2}$"),
+    category: Optional[str] = Query(None, max_length=128),
+    cuisine: Optional[str] = Query(None, max_length=128),
+    restaurant_id: Optional[str] = Query(None, max_length=64),
+    search: Optional[str] = Query(None, max_length=100),
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db)
@@ -95,7 +95,7 @@ def get_food_dishes(
 def get_food_dish_by_id(
     id: str,
     request: Request,
-    country: Optional[str] = Query(None),
+    country: Optional[str] = Query(None, min_length=2, max_length=2, pattern=r"^[A-Za-z]{2}$"),
     db: Session = Depends(get_db)
 ):
     geo = detect_country_from_request(request, override_country=country)

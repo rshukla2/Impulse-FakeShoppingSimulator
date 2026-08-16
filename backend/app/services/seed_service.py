@@ -14,13 +14,15 @@ from typing import Any, Dict, Iterable, List
 from sqlalchemy.orm import Session
 
 from backend.app.config import settings
-from backend.app.models import ProductModel, RestaurantModel
-from backend.app.services.catalog_store import upsert_products
+from backend.app.models import RestaurantModel
+from backend.app.services.catalog_store import replace_source_products
 from backend.app.services.currency_service import seed_fallback_rates
 
 
 FICTIONAL_PATH = settings.project_root / "data" / "fictional-products.json"
 PRESERVED_CATALOG_PATH = settings.project_root / "data" / "google-ai-studio-catalog.json"
+REALISTIC_SEED_PATH = settings.project_root / "data" / "realistic-seed-products.json"
+RESTAURANT_PATH = settings.project_root / "data" / "restaurants.json"
 
 
 def _read_json(path: Path):
@@ -62,6 +64,7 @@ def load_fictional_products() -> List[Dict[str, Any]]:
 
 
 def load_preserved_seed_catalog() -> tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Read the immutable prototype snapshot for preservation checks only."""
     catalog = _read_json(PRESERVED_CATALOG_PATH)
     products = []
     for item in catalog.get("products", []):
@@ -76,29 +79,101 @@ def load_preserved_seed_catalog() -> tuple[List[Dict[str, Any]], List[Dict[str, 
     return products, catalog.get("restaurants", [])
 
 
+def load_realistic_seed_products() -> List[Dict[str, Any]]:
+    payload = _read_json(REALISTIC_SEED_PATH)
+    if not isinstance(payload, list):
+        raise ValueError("realistic-seed-products.json must contain a JSON array")
+    ids = set()
+    result = []
+    for item in payload:
+        _required(
+            item,
+            ("id", "type", "name", "category", "source", "base_price_usd"),
+            "Realistic seed product",
+        )
+        if item["id"] in ids:
+            raise ValueError(f"Duplicate realistic seed product ID: {item['id']}")
+        if item["type"] not in {"shopping", "grocery", "food"}:
+            raise ValueError(f"Unsupported seed product type: {item['type']}")
+        if not str(item["source"]).startswith("seed_"):
+            raise ValueError(f"Realistic seed source must start with seed_: {item['id']}")
+        if item.get("is_fictional"):
+            raise ValueError(f"Realistic seed cannot be fictional: {item['id']}")
+        ids.add(item["id"])
+        result.append(dict(item))
+    if len(result) != 41:
+        raise ValueError(f"Expected 41 realistic seed products, found {len(result)}")
+    return result
+
+
+def load_restaurants() -> List[Dict[str, Any]]:
+    payload = _read_json(RESTAURANT_PATH)
+    if not isinstance(payload, list):
+        raise ValueError("restaurants.json must contain a JSON array")
+    ids = set()
+    for item in payload:
+        _required(item, ("id", "name", "cuisine"), "Restaurant")
+        if item["id"] in ids:
+            raise ValueError(f"Duplicate restaurant ID: {item['id']}")
+        ids.add(item["id"])
+    if len(payload) != 6:
+        raise ValueError(f"Expected 6 restaurant templates, found {len(payload)}")
+    return payload
+
+
 def seed_database_if_empty(db: Session) -> Dict[str, int]:
+    """Converge every database on the tracked, validated local seed catalog."""
     seed_fallback_rates(db)
     fictional = load_fictional_products()
-    realistic, restaurants = load_preserved_seed_catalog()
+    realistic = load_realistic_seed_products()
+    restaurants = load_restaurants()
     restaurant_count = 0
     for item in restaurants:
-        _required(item, ("id", "name", "cuisine"), "Restaurant")
-        if db.get(RestaurantModel, item["id"]) is None:
+        restaurant = db.get(RestaurantModel, item["id"])
+        values = {
+            "name": item["name"],
+            "cuisine": item["cuisine"],
+            "tagline": item.get("tagline"),
+            "image_url": item.get("image_url"),
+            "rating": item.get("rating", 4.8),
+            "review_count": item.get("review_count", 1000),
+            "country_relevance": item.get("country_relevance") or "GLOBAL",
+            "price_level": item.get("price_level", "$$"),
+        }
+        if restaurant is None:
             db.add(RestaurantModel(
                 id=item["id"], name=item["name"], cuisine=item["cuisine"],
-                tagline=item.get("tagline"), image_url=item.get("image_url"),
-                rating=item.get("rating", 4.8), review_count=item.get("review_count", 1000),
-                country_relevance=item.get("country_relevance") or "GLOBAL",
-                price_level=item.get("price_level", "$$"),
+                tagline=values["tagline"], image_url=values["image_url"],
+                rating=values["rating"], review_count=values["review_count"],
+                country_relevance=values["country_relevance"],
+                price_level=values["price_level"],
             ))
             restaurant_count += 1
+        else:
+            for key, value in values.items():
+                setattr(restaurant, key, value)
     db.commit()
-    # Earlier drafts inserted static placeholders under live-provider source
-    # names. Reclassify only their stable legacy ID namespaces so a later
-    # provider refresh never deactivates them.
-    for prefix, source in (("ice_", "icecat"), ("groc_", "openfoodfacts"), ("dish_", "wikidata")):
-        for product in db.query(ProductModel).filter(ProductModel.id.like(f"{prefix}%"), ProductModel.source == source).all():
-            product.source = f"seed_{source}"
-    db.commit()
-    product_count = upsert_products(db, [*fictional, *realistic])
+
+    product_count = replace_source_products(
+        db,
+        fictional,
+        source="fictional",
+        product_type="shopping",
+    )
+    for source, product_type in (
+        ("seed_icecat", "shopping"),
+        ("seed_openfoodfacts", "grocery"),
+        ("seed_wikidata", "food"),
+    ):
+        products = [
+            item
+            for item in realistic
+            if item["source"] == source and item["type"] == product_type
+        ]
+        product_count += replace_source_products(
+            db,
+            products,
+            source=source,
+            product_type=product_type,
+        )
     return {"fictional": len(fictional), "realistic": len(realistic), "restaurants_added": restaurant_count, "products_written": product_count}

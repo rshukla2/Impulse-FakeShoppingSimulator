@@ -1,0 +1,18 @@
+[Unit]
+Description=Impulse catalog synchronization (%i)
+After=network-online.target impulse.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=impulse
+Group=impulse
+WorkingDirectory=/opt/impulse
+EnvironmentFile=/opt/impulse/.env
+ExecStart=/opt/impulse/.venv/bin/python /opt/impulse/scripts/sync_all.py --source %i
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/impulse/storage /opt/impulse/backups

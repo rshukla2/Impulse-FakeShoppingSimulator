@@ -1,5 +1,7 @@
 import io
+import sqlite3
 import tarfile
+from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
 import httpx
@@ -7,13 +9,15 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from backend.app.database import Base
+from backend.app.database import Base, configure_sqlite_connection
+from backend.app.config import settings
 from backend.app.models import ProductModel
 from backend.app.services.catalog_store import replace_source_products, sanitized_error
 from backend.app.services.currency_service import normalize_frankfurter_rates, resolve_geo_currency
 from backend.app.services.external_http import ExternalHTTPClient
 from backend.app.services.geo_service import GeoIPCountryDatabase
 from backend.app.services.icecat_service import (
+    candidate_target_for,
     icecat_auth_headers,
     infer_category,
     normalize_icecat_xml,
@@ -192,6 +196,13 @@ def test_icecat_selection_fills_target_when_categories_are_sparse():
     assert len({row["product_id"] for row in selected}) == 10
 
 
+def test_icecat_candidate_buffer_preserves_usable_target_semantics():
+    assert candidate_target_for(5000, 20) == 6000
+    assert candidate_target_for(10, 0) == 10
+    with pytest.raises(ValueError, match="at least one"):
+        candidate_target_for(0, 20)
+
+
 @pytest.mark.asyncio
 async def test_icecat_requires_credentials_without_exposing_values():
     with patch(
@@ -217,7 +228,10 @@ def test_geoip_archive_rejects_unsafe_members(tmp_path):
 
 
 def test_installed_geolite_database_known_ip():
-    database = GeoIPCountryDatabase("data/GeoLite2-Country.mmdb")
+    database_path = Path(settings.GEOIP_DATABASE_PATH)
+    if not database_path.is_file():
+        pytest.skip("GeoLite2 Country is an operator-installed, Git-ignored runtime file")
+    database = GeoIPCountryDatabase(str(database_path))
     assert database.lookup("8.8.8.8")[0] == "US"
     database.close()
 
@@ -226,3 +240,14 @@ def test_secret_redaction():
     code, message = sanitized_error(RuntimeError("api_key=secret123 token=abc"))
     assert code == "runtimeerror"
     assert "secret123" not in message and "abc" not in message
+
+
+def test_sqlite_connections_enable_production_pragmas():
+    connection = sqlite3.connect(":memory:")
+    try:
+        configure_sqlite_connection(connection)
+        assert connection.execute("PRAGMA foreign_keys").fetchone()[0] == 1
+        assert connection.execute("PRAGMA busy_timeout").fetchone()[0] == 30000
+        assert connection.execute("PRAGMA synchronous").fetchone()[0] == 1
+    finally:
+        connection.close()

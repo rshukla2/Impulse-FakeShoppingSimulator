@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Impulse exchange-rate synchronization
+
+[Timer]
+OnCalendar=*-*-* 02:45:00
+Persistent=true
+RandomizedDelaySec=10m
+Unit=impulse-sync@frankfurter.service
+
+[Install]
+WantedBy=timers.target
