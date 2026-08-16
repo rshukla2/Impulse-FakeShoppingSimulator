@@ -1,0 +1,76 @@
+name: Deploy Flutter web to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Resolve Flutter dependencies
+        working-directory: mobile
+        run: flutter pub get
+
+      - name: Analyze and test Flutter
+        working-directory: mobile
+        run: |
+          flutter analyze
+          flutter test
+
+      - name: Build Flutter web
+        working-directory: mobile
+        env:
+          CONFIGURED_API_BASE_URL: ${{ vars.API_BASE_URL }}
+        run: |
+          api_base_url="$CONFIGURED_API_BASE_URL"
+          preview_mode=false
+
+          if [ -z "$api_base_url" ]; then
+            api_base_url="https://api.example.invalid"
+            preview_mode=true
+            echo "::warning::API_BASE_URL is not configured. Publishing the frontend in deployment-preview mode."
+          elif [[ "$api_base_url" != https://* ]]; then
+            echo "::error::API_BASE_URL must be an HTTPS URL for GitHub Pages."
+            exit 1
+          fi
+
+          flutter build web --release \
+            --base-href "/${{ github.event.repository.name }}/" \
+            --dart-define="API_BASE_URL=$api_base_url" \
+            --dart-define="DEPLOYMENT_PREVIEW=$preview_mode"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: mobile/build/web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
