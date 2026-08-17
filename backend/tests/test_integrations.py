@@ -12,10 +12,15 @@ from sqlalchemy.orm import sessionmaker
 from backend.app.database import Base, configure_sqlite_connection
 from backend.app.config import settings
 from backend.app.models import ProductModel
+from backend.app.routers.categories import grocery_categories_for_country
 from backend.app.services.catalog_store import replace_source_products, sanitized_error
 from backend.app.services.currency_service import normalize_frankfurter_rates, resolve_geo_currency
 from backend.app.services.external_http import ExternalHTTPClient
 from backend.app.services.geo_service import GeoIPCountryDatabase
+from backend.app.services.grocery_categories import (
+    canonical_grocery_category,
+    normalize_cached_grocery_categories,
+)
 from backend.app.services.icecat_service import (
     candidate_target_for,
     icecat_auth_headers,
@@ -95,6 +100,73 @@ def test_openfoodfacts_normalization_is_country_scoped():
     assert gb["id"] == "off_gb_1234567890123"
     assert normalize_openfoodfacts_product({**product, "image_front_url": None}, "US") is None
     assert normalize_openfoodfacts_product({**product, "categories_tags_en": []}, "US") is None
+
+
+def test_grocery_categories_use_compact_english_taxonomy():
+    assert canonical_grocery_category(
+        name="Plain yogurt",
+        tags=["bn:দুগ্ধ", "en:dairies"],
+    ) == "Dairy"
+    assert canonical_grocery_category(
+        name="Mystery product",
+        category="de:Gurke",
+    ) == "Pantry"
+    assert canonical_grocery_category(
+        name="Sparkling water",
+        category="Beverages and beverages preparations",
+    ) == "Beverages"
+
+
+def test_cached_grocery_categories_are_converged_without_refetching(db):
+    db.add(
+        ProductModel(
+            id="off_us_yogurt",
+            type="grocery",
+            name="Plain Yogurt",
+            category="Bn:টনি টেস্ট",
+            source="openfoodfacts",
+            source_id="123456",
+            country_code="US",
+            base_price_usd=4.0,
+            is_active=True,
+        )
+    )
+    db.commit()
+
+    assert normalize_cached_grocery_categories(db) == 1
+    assert db.get(ProductModel, "off_us_yogurt").category == "Dairy"
+
+
+def test_grocery_category_filters_are_country_scoped(db):
+    for product_id, country, category in (
+        ("global-pantry", None, "Pantry"),
+        ("us-drink", "US", "Beverages"),
+        ("in-snack", "IN", "Snacks"),
+    ):
+        db.add(
+            ProductModel(
+                id=product_id,
+                type="grocery",
+                name=product_id,
+                category=category,
+                source="test",
+                base_price_usd=4.0,
+                country_code=country,
+                is_active=True,
+            )
+        )
+    db.commit()
+
+    assert grocery_categories_for_country(db, "US") == [
+        "All",
+        "Beverages",
+        "Pantry",
+    ]
+    assert grocery_categories_for_country(db, "IN") == [
+        "All",
+        "Snacks",
+        "Pantry",
+    ]
 
 
 def test_country_refresh_is_deduplicated(db):

@@ -214,13 +214,49 @@ final restaurantDetailProvider =
 
 final categoriesProvider =
     FutureProvider<Map<String, List<String>>>((ref) async {
+  final bootstrap = ref.watch(bootstrapProvider).value;
   final client = ref.watch(apiClientProvider);
-  final response = await client.dio.get('/categories');
+  final response = await client.dio.get(
+    '/categories',
+    queryParameters: {
+      if (bootstrap != null) 'country': bootstrap.countryCode,
+    },
+  );
   return {
     'shopping':
         List<String>.from(response.data['shopping_categories'] ?? const []),
-    'groceries':
-        List<String>.from(response.data['grocery_categories'] ?? const []),
+    'groceries': cleanGroceryCategories(
+      response.data['grocery_categories'] as List? ?? const [],
+    ),
     'food': List<String>.from(response.data['food_cuisines'] ?? const []),
   };
 });
+
+const groceryCategoryOrder = <String>[
+  'All',
+  'Beverages',
+  'Breakfast & Cereal',
+  'Dairy',
+  'Bakery',
+  'Snacks',
+  'Pantry',
+  'Condiments & Sauces',
+  'Prepared Foods',
+  'Frozen Foods',
+  'Produce',
+  'Meat & Seafood',
+  'Sweets & Desserts',
+  'Dietary Supplements',
+];
+
+List<String> cleanGroceryCategories(List<dynamic> values) {
+  final available = values
+      .whereType<String>()
+      .map((value) => value.trim())
+      .where((value) => value.isNotEmpty)
+      .toSet();
+  available.add('All');
+  return groceryCategoryOrder
+      .where((category) => available.contains(category))
+      .toList();
+}

@@ -61,7 +61,7 @@ class _GroceriesScreenState extends ConsumerState<GroceriesScreen> {
     final feed = ref.watch(groceriesProvider(_params));
     final bootstrap = ref.watch(bootstrapProvider).value;
     final categories = ref.watch(categoriesProvider).value?['groceries'] ??
-        const ['All', 'Snacks', 'Beverages', 'Dairy', 'Pantry'];
+        groceryCategoryOrder;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -121,27 +121,29 @@ class _GroceriesScreenState extends ConsumerState<GroceriesScreen> {
                       _onSearchChanged(value);
                     },
                   ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 40,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: categories.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 8),
-                      itemBuilder: (context, index) {
-                        final category = categories[index];
-                        return ChoiceChip(
-                          label: Text(category),
-                          selected: category == _selectedCategory,
-                          onSelected: (selected) {
-                            if (selected) {
-                              setState(() => _selectedCategory = category);
-                            }
-                          },
-                        );
-                      },
+                  if (categories.length > 1) ...[
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 40,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: categories.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          final category = categories[index];
+                          return ChoiceChip(
+                            label: Text(category),
+                            selected: category == _selectedCategory,
+                            onSelected: (selected) {
+                              if (selected) {
+                                setState(() => _selectedCategory = category);
+                              }
+                            },
+                          );
+                        },
+                      ),
                     ),
-                  ),
+                  ],
                   const SizedBox(height: 20),
                   Text(
                     _selectedCategory == 'All'

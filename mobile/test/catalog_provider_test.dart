@@ -82,7 +82,15 @@ void main() {
       if (options.path == '/categories') {
         resolveJson(options, handler, {
           'shopping_categories': ['All', 'Audio'],
-          'grocery_categories': ['All', 'Bakery'],
+          'grocery_categories': [
+            'All',
+            'Bakery',
+            '',
+            'Bn:টনি টেস্ট',
+            'Dairy',
+            'Dairy',
+            'Dairy',
+          ],
           'food_cuisines': ['All', 'Japanese'],
         });
         return;
@@ -126,7 +134,10 @@ void main() {
     final results = await container.read(foodSearchProvider('ramen').future);
 
     expect(categories['shopping'], ['All', 'Audio']);
-    expect(categories['groceries'], ['All', 'Bakery']);
+    expect(
+      categories['groceries'],
+      ['All', 'Dairy', 'Bakery'],
+    );
     expect(categories['food'], ['All', 'Japanese']);
     expect(results.restaurants.single.name, 'Ramen House');
     expect(results.dishes.single.name, 'Miso Ramen');

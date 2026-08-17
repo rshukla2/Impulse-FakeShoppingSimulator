@@ -16,6 +16,7 @@ from backend.app.database import SessionLocal
 from backend.app.models import CatalogCountrySyncModel
 from backend.app.services.catalog_store import country_sync_record, fail_sync, finish_sync, replace_source_products, start_sync, utcnow
 from backend.app.services.external_http import ExternalHTTPClient
+from backend.app.services.grocery_categories import canonical_grocery_category
 from backend.app.services.pricing_rules import stable_catalog_values
 
 
@@ -34,10 +35,13 @@ def _clean(value: Any, limit: int = 255) -> Optional[str]:
 
 def _category(product: Dict[str, Any]) -> str:
     tags = product.get("categories_tags_en") or []
-    if tags:
-        return str(tags[0]).replace("en:", "").replace("-", " ").title()[:128]
     raw = _clean(product.get("categories"), 128)
-    return raw.split(",", 1)[0] if raw else "Groceries"
+    return canonical_grocery_category(
+        name=_clean(product.get("product_name")),
+        category=raw,
+        brand=_clean(product.get("brands")),
+        tags=tags,
+    )
 
 
 def normalize_openfoodfacts_product(product: Dict[str, Any], country_code: str) -> Optional[Dict[str, Any]]:

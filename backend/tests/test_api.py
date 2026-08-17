@@ -128,6 +128,15 @@ def test_groceries_country_prioritization(client):
     assert data_in["currency"] == "INR"
     assert all("_us_" not in item["id"] for item in data_in["items"])
 
+
+def test_grocery_categories_are_country_scoped_and_professional(client):
+    response = client.get("/categories?country=US")
+    assert response.status_code == 200
+    categories = response.json()["grocery_categories"]
+    assert categories[0] == "All"
+    assert len(categories) == len(set(categories))
+    assert all(category and ":" not in category for category in categories)
+
 def test_restaurants_and_food(client):
     response = client.get("/restaurants")
     assert response.status_code == 200

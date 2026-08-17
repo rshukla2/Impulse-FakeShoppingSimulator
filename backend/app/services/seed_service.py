@@ -17,6 +17,7 @@ from backend.app.config import settings
 from backend.app.models import RestaurantModel
 from backend.app.services.catalog_store import replace_source_products
 from backend.app.services.currency_service import seed_fallback_rates
+from backend.app.services.grocery_categories import normalize_cached_grocery_categories
 
 
 FICTIONAL_PATH = settings.project_root / "data" / "fictional-products.json"
@@ -176,4 +177,5 @@ def seed_database_if_empty(db: Session) -> Dict[str, int]:
             source=source,
             product_type=product_type,
         )
+    normalize_cached_grocery_categories(db)
     return {"fictional": len(fictional), "realistic": len(realistic), "restaurants_added": restaurant_count, "products_written": product_count}
