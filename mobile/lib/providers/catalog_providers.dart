@@ -34,6 +34,7 @@ class CatalogParams {
 class CatalogFeedState {
   final List<Product> items;
   final int page;
+  final int total;
   final bool hasMore;
   final bool isLoading;
   final Object? error;
@@ -41,6 +42,7 @@ class CatalogFeedState {
   const CatalogFeedState({
     this.items = const [],
     this.page = 0,
+    this.total = 0,
     this.hasMore = true,
     this.isLoading = false,
     this.error,
@@ -51,6 +53,7 @@ class CatalogFeedState {
   CatalogFeedState copyWith({
     List<Product>? items,
     int? page,
+    int? total,
     bool? hasMore,
     bool? isLoading,
     Object? error,
@@ -59,6 +62,7 @@ class CatalogFeedState {
     return CatalogFeedState(
       items: items ?? this.items,
       page: page ?? this.page,
+      total: total ?? this.total,
       hasMore: hasMore ?? this.hasMore,
       isLoading: isLoading ?? this.isLoading,
       error: clearError ? null : error ?? this.error,
@@ -98,6 +102,7 @@ class CatalogFeedNotifier extends StateNotifier<CatalogFeedState> {
     return CatalogPage(
       items: rawItems.map((item) => Product.fromJson(item)).toList(),
       page: (response.data['page'] as num?)?.toInt() ?? page,
+      total: (response.data['total'] as num?)?.toInt() ?? rawItems.length,
       hasMore: response.data['has_more'] == true,
     );
   }
@@ -115,6 +120,7 @@ class CatalogFeedNotifier extends StateNotifier<CatalogFeedState> {
       state = CatalogFeedState(
         items: byId.values.toList(),
         page: result.page,
+        total: result.total,
         hasMore: result.hasMore,
       );
     } catch (error) {

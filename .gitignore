@@ -34,6 +34,7 @@ mobile/.flutter-plugins
 mobile/.flutter-plugins-dependencies
 mobile/.packages
 mobile/build/
+mobile/.flutter_build
 mobile/coverage/
 mobile/android/.gradle/
 mobile/android/local.properties

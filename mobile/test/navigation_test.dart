@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:impulse/core/theme/app_colors.dart';
 import 'package:impulse/core/theme/app_theme.dart';
+import 'package:impulse/core/icons/app_icons.dart';
 import 'package:impulse/providers/bootstrap_provider.dart';
 import 'package:impulse/providers/user_provider.dart';
 import 'package:impulse/screens/main_navigation_screen.dart';
+import 'package:impulse/widgets/badge_icon.dart';
 
 import 'test_support.dart';
 
@@ -36,6 +38,7 @@ void main() {
           resolveJson(options, handler, {
             'items': [],
             'page': 1,
+            'total': 0,
             'has_more': false,
           });
         default:
@@ -79,6 +82,16 @@ void main() {
     expect(nav.backgroundColor, AppColors.forestGreen);
     expect(nav.selectedItemColor, AppColors.warmBeige);
     expect(nav.showUnselectedLabels, isTrue);
+    expect((nav.items[2].icon as Icon).icon, LucideIcons.groceries);
+    expect(find.byKey(const Key('impulse-toolbar-logo')), findsOneWidget);
+    expect(find.byIcon(LucideIcons.groceries), findsNWidgets(2));
+    expect(
+      find.descendant(
+        of: find.byType(CartBadgeButton),
+        matching: find.byIcon(LucideIcons.shoppingCart),
+      ),
+      findsOneWidget,
+    );
 
     await tester.ensureVisible(find.text('General Shopping'));
     await tester.pumpAndSettle();
@@ -90,7 +103,7 @@ void main() {
           .currentIndex,
       3,
     );
-    expect(find.text('Catalog Items'), findsOneWidget);
+    expect(find.text('0 Catalog Items'), findsOneWidget);
   });
 
   testWidgets('navigation remains responsive on tablet and web canvases',
@@ -114,6 +127,7 @@ void main() {
         resolveJson(options, handler, {
           'items': [],
           'page': 1,
+          'total': 0,
           'has_more': false,
         });
       }

@@ -58,7 +58,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
             label: 'Food',
           ),
           BottomNavigationBarItem(
-            icon: Icon(LucideIcons.apple),
+            icon: Icon(LucideIcons.groceries),
             label: 'Groceries',
           ),
           BottomNavigationBarItem(

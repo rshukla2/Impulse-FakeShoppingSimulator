@@ -21,6 +21,7 @@ from backend.app.services.icecat_service import (
     icecat_auth_headers,
     infer_category,
     normalize_icecat_xml,
+    public_image_is_usable,
     sanitize_icecat_url,
     select_balanced_index_rows,
     sync_icecat_products,
@@ -201,6 +202,26 @@ def test_icecat_candidate_buffer_preserves_usable_target_semantics():
     assert candidate_target_for(10, 0) == 10
     with pytest.raises(ValueError, match="at least one"):
         candidate_target_for(0, 20)
+
+
+@pytest.mark.asyncio
+async def test_icecat_public_image_validation_requires_https_image_response():
+    def handler(request):
+        if request.url.path.endswith("/good.jpg"):
+            return httpx.Response(200, headers={"Content-Type": "image/jpeg"})
+        if request.url.path.endswith("/not-image.jpg"):
+            return httpx.Response(200, headers={"Content-Type": "text/html"})
+        return httpx.Response(404)
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    try:
+        async with ExternalHTTPClient("icecat-image-test", client) as external:
+            assert await public_image_is_usable(external, "https://images.test/good.jpg")
+            assert not await public_image_is_usable(external, "https://images.test/not-image.jpg")
+            assert not await public_image_is_usable(external, "https://images.test/missing.jpg")
+            assert not await public_image_is_usable(external, "http://images.test/good.jpg")
+    finally:
+        await client.aclose()
 
 
 @pytest.mark.asyncio

@@ -15,6 +15,7 @@ abstract final class LucideIcons {
   static const creditCard = Icons.credit_card_outlined;
   static const edit2 = Icons.edit_outlined;
   static const globe = Icons.public;
+  static const groceries = Icons.shopping_basket_outlined;
   static const heartHandshake = Icons.volunteer_activism_outlined;
   static const home = Icons.home_outlined;
   static const info = Icons.info_outline;

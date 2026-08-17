@@ -30,7 +30,7 @@ class ImpulseApp extends ConsumerWidget {
     final user = ref.watch(userProvider);
 
     return MaterialApp(
-      title: 'Impulse — Fake Shopping Simulator',
+      title: 'Impulse - Fake Shopping Simulator',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home:

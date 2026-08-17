@@ -113,6 +113,13 @@ def test_shopping_first_ten_use_nine_to_one_pattern(client):
     data = client.get("/shopping?limit=10").json()
     assert sum(1 for item in data["items"] if item["is_fictional"]) == 1
 
+
+def test_shopping_ranks_every_missing_image_last(client):
+    items = client.get("/shopping?limit=100").json()["items"]
+    image_flags = [bool(item.get("image_url")) for item in items]
+    assert image_flags == sorted(image_flags, reverse=True)
+    assert {item["id"] for item in items[-2:]} == {"fake_003", "fake_012"}
+
 def test_groceries_country_prioritization(client):
     response_in = client.get("/groceries?country=IN")
     assert response_in.status_code == 200

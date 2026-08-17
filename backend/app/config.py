@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     ICECAT_TARGET_PRODUCTS: int = 5000
     ICECAT_CANDIDATE_BUFFER_PERCENT: int = 20
     ICECAT_CONCURRENCY: int = 3
+    ICECAT_IMAGE_VALIDATION_CONCURRENCY: int = 12
     FRANKFURTER_API_BASE: str = "https://api.frankfurter.dev/v2"
     OPENFOODFACTS_API_BASE: str = "https://world.openfoodfacts.org/api/v2"
     OPENFOODFACTS_COUNTRIES: str = "US,IN,GB,JP,DE,FR,CA,AU,MX,BR,SG,AE,LK,NP,BD"

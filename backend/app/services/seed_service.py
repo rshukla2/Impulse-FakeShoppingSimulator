@@ -1,7 +1,7 @@
 """Validated, idempotent local seed imports.
 
-The preserved AI Studio snapshot is read-only and supplies realistic fallback
-records. Fictional shopping data has one editable source of truth:
+The checksum-protected reference catalog supplies realistic fallback records.
+Fictional shopping data has one editable source of truth:
 ``data/fictional-products.json``.
 """
 
@@ -20,7 +20,7 @@ from backend.app.services.currency_service import seed_fallback_rates
 
 
 FICTIONAL_PATH = settings.project_root / "data" / "fictional-products.json"
-PRESERVED_CATALOG_PATH = settings.project_root / "data" / "google-ai-studio-catalog.json"
+REFERENCE_CATALOG_PATH = settings.project_root / "data" / "reference-catalog.json"
 REALISTIC_SEED_PATH = settings.project_root / "data" / "realistic-seed-products.json"
 RESTAURANT_PATH = settings.project_root / "data" / "restaurants.json"
 
@@ -43,29 +43,29 @@ def load_fictional_products() -> List[Dict[str, Any]]:
     ids = set()
     result = []
     for item in payload:
-        _required(item, ("id", "name", "category", "base_price_usd", "image"), "Fictional product")
+        _required(item, ("id", "name", "category", "base_price_usd"), "Fictional product")
         if item["id"] in ids:
             raise ValueError(f"Duplicate fictional product ID: {item['id']}")
         ids.add(item["id"])
         result.append({
             "id": item["id"], "type": "shopping", "name": item["name"],
             "brand": item.get("brand"), "category": item["category"],
-            "description": item.get("description"), "image_url": item["image"],
+            "description": item.get("description"), "image_url": item.get("image"),
             "source": "fictional", "source_id": item["id"],
             "base_price_usd": float(item["base_price_usd"]),
             "original_price_usd": item.get("original_price_usd"),
             "rating": item.get("rating", 4.8), "review_count": item.get("review_count", 1000),
             "is_fictional": True, "image_license": item.get("image_license"),
-            "image_attribution": item.get("image_attribution"), "image_source_url": item["image"],
+            "image_attribution": item.get("image_attribution"), "image_source_url": item.get("image"),
         })
     if len(result) != 34:
         raise ValueError(f"Expected 34 preserved fictional products, found {len(result)}")
     return result
 
 
-def load_preserved_seed_catalog() -> tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
-    """Read the immutable prototype snapshot for preservation checks only."""
-    catalog = _read_json(PRESERVED_CATALOG_PATH)
+def load_reference_seed_catalog() -> tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Read the checksum-protected reference catalog."""
+    catalog = _read_json(REFERENCE_CATALOG_PATH)
     products = []
     for item in catalog.get("products", []):
         if item.get("is_fictional"):

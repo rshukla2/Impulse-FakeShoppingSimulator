@@ -14,8 +14,7 @@ GitHub repository
     └── synchronized external catalog/data sources
 ```
 
-There is no React, Vite, Node, Express, or Gemini application runtime. Flutter
-is the only client and FastAPI is the only server.
+Flutter is the only client and FastAPI is the only server.
 
 ## Client responsibilities
 
@@ -77,14 +76,12 @@ refreshes retain the last usable cache. Production refreshes are scheduled
 maintenance jobs rather than user-triggered work. Provider requests use bounded
 retries, throttling, timeouts, and identifiable User-Agent headers.
 
-## Catalog preservation
+## Catalog reference data
 
-The original Google AI Studio catalog is preserved verbatim in
-`data/google-ai-studio-catalog.json`: 21 products and five restaurants. Its
-realistic products and restaurant templates are imported as stable seed
-fallbacks. Fictional products are maintained separately. The two conflicting
-archived fictional records use `fake_ai_004` and `fake_ai_005`, preserving the
-32 existing IDs and both original variants.
+`data/reference-catalog.json` contains 21 checksum-protected product records
+and five restaurant records. Realistic products and restaurant templates are
+imported as stable seed fallbacks. Fictional products are maintained separately
+in `data/fictional-products.json`.
 
 ## Production deployment assets
 

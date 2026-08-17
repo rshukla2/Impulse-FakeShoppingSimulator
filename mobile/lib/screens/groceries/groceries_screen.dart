@@ -175,9 +175,9 @@ class _GroceriesScreenState extends ConsumerState<GroceriesScreen> {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
               sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 260,
-                  childAspectRatio: 0.68,
+                  childAspectRatio: ProductCard.gridAspectRatioFor(context),
                   crossAxisSpacing: 14,
                   mainAxisSpacing: 14,
                 ),

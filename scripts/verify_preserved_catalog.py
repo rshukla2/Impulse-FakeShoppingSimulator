@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the immutable Google AI Studio catalog snapshot."""
+"""Verify the checksum-protected reference catalog."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ import json
 from pathlib import Path
 
 
-CATALOG_PATH = Path(__file__).resolve().parents[1] / "data" / "google-ai-studio-catalog.json"
-EXPECTED_SHA256 = "b651c6c9bebea70212a321ccf7374e296be63d4f82d0893f2a6f1f7129275c47"
+CATALOG_PATH = Path(__file__).resolve().parents[1] / "data" / "reference-catalog.json"
+EXPECTED_SHA256 = "a22fd71ef4e2070038e3d3eb1d5d8a1fb982d1ad80173c522b7a758c4a34c440"
 
 
 def main() -> None:

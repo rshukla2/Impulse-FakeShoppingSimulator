@@ -210,10 +210,54 @@ async def sync_icecat_products(*, client=None, target: Optional[int] = None) -> 
                         return normalize_icecat_index_row(row)
 
             products = await asyncio.gather(*(detail(row) for row in rows))
-    unique = {product["id"]: product for product in products if product.get("name") and product.get("image_url")}
+
+            image_semaphore = asyncio.Semaphore(
+                max(1, settings.ICECAT_IMAGE_VALIDATION_CONCURRENCY)
+            )
+
+            async def validate_image(product):
+                image_url = product.get("image_url")
+                if not image_url:
+                    return product
+                async with image_semaphore:
+                    if not await public_image_is_usable(http, image_url):
+                        # Keep the original source URL for provenance, but do
+                        # not advertise an image the client cannot display.
+                        product = dict(product)
+                        product["image_url"] = None
+                return product
+
+            products = await asyncio.gather(
+                *(validate_image(product) for product in products)
+            )
+
+    unique = {product["id"]: product for product in products if product.get("name")}
     if len(unique) < target:
         raise ValueError(
             f"Icecat returned {len(unique)} usable products; target is {target}. "
             "Existing cache was retained."
         )
-    return list(unique.values())[:target]
+    ranked = sorted(
+        unique.values(),
+        # Python's sort is stable, so the balanced provider-index selection
+        # order is preserved inside the image and no-image partitions.
+        key=lambda product: not bool(product.get("image_url")),
+    )
+    return ranked[:target]
+
+
+async def public_image_is_usable(http: ExternalHTTPClient, url: str) -> bool:
+    """Return whether an unauthenticated Flutter client can fetch an image."""
+    parts = urlsplit(url)
+    if parts.scheme.lower() != "https" or not parts.netloc:
+        return False
+    try:
+        response = await http.request(
+            "HEAD",
+            url,
+            headers={"Accept": "image/*"},
+        )
+    except ExternalAPIError:
+        return False
+    content_type = response.headers.get("content-type", "").lower()
+    return content_type.split(";", 1)[0].strip().startswith("image/")

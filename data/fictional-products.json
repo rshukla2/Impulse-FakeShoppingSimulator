@@ -39,7 +39,7 @@
     "original_price_usd": 799.00,
     "rating": 4.7,
     "review_count": 3810,
-    "image": "https://images.unsplash.com/photo-1580481077198-c847ad436c84?w=800&auto=format&fit=crop&q=80",
+    "image": null,
     "is_fictional": true,
     "image_license": "Unsplash Commercial License",
     "image_attribution": "Photo by LaterLab / Unsplash"
@@ -174,7 +174,7 @@
     "original_price_usd": 14.99,
     "rating": 4.9,
     "review_count": 42100,
-    "image": "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=800&auto=format&fit=crop&q=80",
+    "image": null,
     "is_fictional": true,
     "image_license": "Unsplash Commercial License",
     "image_attribution": "Photo by AquaDox / Unsplash"
@@ -480,7 +480,7 @@
     "image_attribution": "Photo by PopForever / Unsplash"
   },
   {
-    "id": "fake_ai_004",
+    "id": "fake_033",
     "name": "Wireless Thought Noise-Cancelling Headband",
     "brand": "QuietMind",
     "category": "Electronics",
@@ -495,7 +495,7 @@
     "image_attribution": "Photo by QuietMind / Unsplash"
   },
   {
-    "id": "fake_ai_005",
+    "id": "fake_034",
     "name": "Definitive Decision Decider Dice (Titanium Edition)",
     "brand": "RollWithIt",
     "category": "Home",

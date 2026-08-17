@@ -45,24 +45,14 @@ def get_shopping_products(
         )
 
     all_items = query.order_by(ProductModel.id.asc()).all()
-    
-    # Stable 9:1 standard-to-fictional ordering keeps pagination deterministic.
-    fictional = [p for p in all_items if p.is_fictional]
-    standard = [p for p in all_items if not p.is_fictional]
-    
-    mixed_list = []
-    f_idx, s_idx = 0, 0
-    while s_idx < len(standard) or f_idx < len(fictional):
-        for _ in range(9):
-            if s_idx < len(standard):
-                mixed_list.append(standard[s_idx])
-                s_idx += 1
-        if f_idx < len(fictional):
-            mixed_list.append(fictional[f_idx])
-            f_idx += 1
-        if s_idx >= len(standard) and f_idx < len(fictional):
-            mixed_list.extend(fictional[f_idx:])
-            break
+
+    # Every usable image ranks ahead of every missing image. Within each
+    # partition, retain the stable standard/fictional interleaving so adding
+    # images later does not make pagination random.
+    with_images = [p for p in all_items if p.image_url and p.image_url.strip()]
+    without_images = [p for p in all_items if not p.image_url or not p.image_url.strip()]
+    mixed_list = _mix_standard_and_fictional(with_images)
+    mixed_list.extend(_mix_standard_and_fictional(without_images))
 
     total = len(mixed_list)
     start = (page - 1) * limit
@@ -83,6 +73,26 @@ def get_shopping_products(
         detected_country=geo["country_code"],
         currency=geo["currency"]
     )
+
+
+def _mix_standard_and_fictional(items):
+    """Return a deterministic nine-standard/one-fictional feed partition."""
+    fictional = [product for product in items if product.is_fictional]
+    standard = [product for product in items if not product.is_fictional]
+    mixed = []
+    fictional_index = standard_index = 0
+    while standard_index < len(standard) or fictional_index < len(fictional):
+        for _ in range(9):
+            if standard_index < len(standard):
+                mixed.append(standard[standard_index])
+                standard_index += 1
+        if fictional_index < len(fictional):
+            mixed.append(fictional[fictional_index])
+            fictional_index += 1
+        if standard_index >= len(standard) and fictional_index < len(fictional):
+            mixed.extend(fictional[fictional_index:])
+            break
+    return mixed
 
 
 @router.get("/{id}", response_model=ProductBase)

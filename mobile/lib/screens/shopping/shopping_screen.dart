@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:impulse/core/icons/app_icons.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../providers/catalog_providers.dart';
@@ -123,8 +124,8 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                   const SizedBox(height: 20),
                   Text(
                     _selectedCategory == 'All'
-                        ? 'Catalog Items'
-                        : '$_selectedCategory Items',
+                        ? '${NumberFormat.decimalPattern().format(feed.total)} Catalog Items'
+                        : '${NumberFormat.decimalPattern().format(feed.total)} $_selectedCategory Items',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ],
@@ -154,9 +155,9 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
               sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 260,
-                  childAspectRatio: 0.68,
+                  childAspectRatio: ProductCard.gridAspectRatioFor(context),
                   crossAxisSpacing: 14,
                   mainAxisSpacing: 14,
                 ),

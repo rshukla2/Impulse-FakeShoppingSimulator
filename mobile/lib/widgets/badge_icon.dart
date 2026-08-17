@@ -16,7 +16,7 @@ class CartBadgeButton extends ConsumerWidget {
       alignment: Alignment.center,
       children: [
         IconButton(
-          icon: const Icon(LucideIcons.shoppingBag),
+          icon: const Icon(LucideIcons.shoppingCart),
           tooltip: 'Cart',
           onPressed: () {
             Navigator.of(context).push(

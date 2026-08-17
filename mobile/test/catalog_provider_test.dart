@@ -26,6 +26,7 @@ void main() {
               ? [productJson(id: 'a'), productJson(id: 'b')]
               : [productJson(id: 'b'), productJson(id: 'c')],
           'page': page,
+          'total': 3,
           'has_more': page == 1,
         });
         return;
@@ -62,6 +63,7 @@ void main() {
     final state = container.read(provider);
     expect(state.items.map((item) => item.id).toList(), ['a', 'b', 'c']);
     expect(state.page, 2);
+    expect(state.total, 3);
     expect(state.hasMore, isFalse);
     expect(shoppingCalls.first, containsPair('limit', 20));
     expect(shoppingCalls.first, containsPair('page', 1));

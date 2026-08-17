@@ -8,6 +8,16 @@ import '../providers/cart_provider.dart';
 import '../screens/product/product_detail_screen.dart';
 
 class ProductCard extends ConsumerWidget {
+  /// Shared grid ratio leaves enough vertical room for a brand, a two-line
+  /// title, both price lines, and the add button on narrow phone columns.
+  /// Larger accessibility text receives proportionally more card height.
+  static double gridAspectRatioFor(BuildContext context) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final accessibilityAdjustment =
+        ((textScale - 1).clamp(0.0, 0.4) * 0.35).toDouble();
+    return (0.64 - accessibilityAdjustment).clamp(0.50, 0.64).toDouble();
+  }
+
   final Product product;
 
   const ProductCard({super.key, required this.product});

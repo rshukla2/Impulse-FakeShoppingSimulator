@@ -1,4 +1,4 @@
-# Impulse — Fake Shopping Simulator
+# Impulse - Fake Shopping Simulator
 
 Impulse is a Flutter application for simulated shopping. Users browse food,
 groceries, general products, and fictional products, place local fake orders,
@@ -35,15 +35,14 @@ manually by the operator.
 ```text
 mobile/   Flutter application for iOS, Android, and web
 backend/  FastAPI application and SQLite models
-data/     Catalog seed data and the preserved AI Studio catalog
+data/     Catalog seed data and the checksum-protected reference catalog
 scripts/  Catalog, exchange-rate, and GeoLite maintenance commands
 deploy/   nginx and systemd production configuration
 docs/     Architecture, API, licenses, deployment, and operating notes
 ```
 
-`data/google-ai-studio-catalog.json` remains an immutable snapshot of the
-original prototype. Its non-fictional records provide permanent realistic seed
-fallbacks. The editable fictional catalog lives only in
+`data/reference-catalog.json` is a checksum-protected reference dataset. Its
+non-fictional records provide permanent realistic seed fallbacks. The editable fictional catalog lives only in
 `data/fictional-products.json` and currently contains 34 unique products.
 
 ## Run the backend locally
@@ -112,7 +111,10 @@ countries are added through a maintenance sync.
 `ICECAT_TARGET_PRODUCTS` is the number of usable, unique Icecat records retained
 in SQLite, not merely the number inspected from the provider index. The sync
 uses `ICECAT_CANDIDATE_BUFFER_PERCENT` to compensate for incomplete index rows
-and retains the previous cache if the usable target cannot be met.
+and retains the previous cache if the usable target cannot be met. Public image
+URLs are checked with bounded `ICECAT_IMAGE_VALIDATION_CONCURRENCY`; records
+whose images are missing, non-HTTPS, or no longer return image content remain
+available but rank after every product with a usable image.
 
 ## Run Flutter locally
 

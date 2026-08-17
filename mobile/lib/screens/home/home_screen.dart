@@ -7,6 +7,7 @@ import '../../core/utils/currency_formatter.dart';
 import '../../providers/user_provider.dart';
 import '../../providers/bootstrap_provider.dart';
 import '../../widgets/badge_icon.dart';
+import '../../widgets/impulse_toolbar_title.dart';
 import '../settings/settings_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -36,7 +37,7 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Impulse'),
+        title: const ImpulseToolbarTitle(),
         actions: [
           IconButton(
             icon: const Icon(LucideIcons.settings),
@@ -108,7 +109,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Here is how much you\'ve saved by not buying anything:',
+                        'Money saved by not buying anything:',
                         style: TextStyle(
                           color: AppColors.slateGrey,
                           fontSize: 13,
@@ -247,7 +248,7 @@ class HomeScreen extends ConsumerWidget {
               context: context,
               title: 'Groceries',
               subtitle: 'Country-prioritized snacks, dairy, drinks & pantry',
-              icon: LucideIcons.apple,
+              icon: LucideIcons.groceries,
               color: AppColors.warmBeige,
               iconColor: AppColors.forestGreen,
               targetTabIndex: 2,
