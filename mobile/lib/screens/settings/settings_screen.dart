@@ -6,6 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../../providers/bootstrap_provider.dart';
 import '../../providers/user_provider.dart';
 import '../credits/credits_screen.dart';
+import '../privacy/privacy_policy_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -146,6 +147,32 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
                   ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Card(
+                color: AppColors.warmBeigeLight,
+                child: ListTile(
+                  leading: const Icon(
+                    LucideIcons.shieldCheck,
+                    color: AppColors.forestGreen,
+                  ),
+                  title: const Text(
+                    'Privacy Policy',
+                    style: TextStyle(
+                      color: AppColors.forestGreen,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'How Impulse handles local and connection data',
+                  ),
+                  trailing: const Icon(LucideIcons.chevronRight),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const PrivacyPolicyScreen(),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),

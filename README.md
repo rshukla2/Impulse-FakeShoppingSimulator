@@ -30,6 +30,9 @@ nginx, systemd, short-lived IP-certificate, scheduled-sync, firewall, and
 SQLite-backup assets needed to provision it; cloud resources are still created
 manually by the operator.
 
+The public privacy policy is available at
+<https://rshukla2.github.io/Impulse-FakeShoppingSimulator/privacy-policy/>.
+
 ## Repository layout
 
 ```text

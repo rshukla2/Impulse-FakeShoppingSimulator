@@ -66,6 +66,8 @@ jobs:
             --dart-define="API_BASE_URL=$api_base_url" \
             --dart-define="DEPLOYMENT_PREVIEW=$preview_mode"
 
+          test -f build/web/privacy-policy/index.html
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:

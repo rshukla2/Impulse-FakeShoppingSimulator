@@ -82,6 +82,24 @@ def test_mobile_release_declares_only_network_access():
     assert 'signingConfigs.getByName("debug")' not in gradle
 
 
+def test_public_privacy_policy_meets_store_delivery_requirements():
+    policy = ROOT / "mobile/web/privacy-policy/index.html"
+    html = policy.read_text(encoding="utf-8")
+    assert "<title>Privacy Policy | Impulse</title>" in html
+    assert "Effective date:" in html
+    assert "Rishi Shukla" in html
+    assert "rishishukla2k@gmail.com" in html
+    assert "does not collect or store personal information in a user database" in html
+    assert "IP address is not retained" in html
+    assert "clear the app's storage" in html
+    assert "<script" not in html
+
+    workflow = (ROOT / ".github/workflows/deploy-pages.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "test -f build/web/privacy-policy/index.html" in workflow
+
+
 def test_no_alternative_production_architecture_is_present():
     forbidden_paths = (
         "Dockerfile",

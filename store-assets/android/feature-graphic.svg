@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e3514"/>
+      <stop offset="0.58" stop-color="#2d4f1e"/>
+      <stop offset="1" stop-color="#3e6b2b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#f5e6cc" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#f5e6cc" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#10200b" flood-opacity="0.38"/>
+    </filter>
+    <clipPath id="iconClip">
+      <rect x="634" y="85" width="330" height="330" rx="70"/>
+    </clipPath>
+  </defs>
+
+  <rect width="1024" height="500" fill="url(#background)"/>
+  <circle cx="815" cy="250" r="300" fill="url(#glow)"/>
+  <circle cx="77" cy="55" r="94" fill="#e27d60" opacity="0.08"/>
+  <circle cx="585" cy="468" r="155" fill="#f5e6cc" opacity="0.04"/>
+
+  <g transform="translate(82 108)">
+    <text x="0" y="92" fill="#f5e6cc" font-family="Arial, Helvetica, sans-serif" font-size="78" font-weight="700" letter-spacing="-2">Impulse</text>
+    <rect x="0" y="119" width="92" height="7" rx="3.5" fill="#e27d60"/>
+    <text x="0" y="178" fill="#faf2e6" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="600">Fake Shopping Simulator</text>
+    <text x="0" y="231" fill="#f5e6cc" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" opacity="0.9">Browse. Build carts. Spend nothing.</text>
+  </g>
+
+  <rect x="617" y="68" width="364" height="364" rx="86" fill="#faf2e6" opacity="0.12" filter="url(#shadow)"/>
+  <image href="../../mobile/assets/branding/impulse-app-icon-master.png" x="634" y="85" width="330" height="330" preserveAspectRatio="xMidYMid slice" clip-path="url(#iconClip)"/>
+  <rect x="634" y="85" width="330" height="330" rx="70" fill="none" stroke="#f5e6cc" stroke-width="3" opacity="0.65"/>
+</svg>
