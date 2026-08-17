@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,6 +7,7 @@ import '../../core/utils/currency_formatter.dart';
 import '../../core/utils/localized_pricing.dart';
 import '../../providers/bootstrap_provider.dart';
 import '../../providers/cart_provider.dart';
+import '../../widgets/app_network_image.dart';
 import '../checkout/checkout_screen.dart';
 
 class CartScreen extends ConsumerWidget {
@@ -114,11 +114,17 @@ class CartScreen extends ConsumerWidget {
                                         color: AppColors.forestGreen,
                                       ),
                                     )
-                                  : CachedNetworkImage(
+                                  : AppNetworkImage(
                                       imageUrl: localized.imageUrl!,
+                                      cacheWidth: 180,
+                                      cacheHeight: 180,
                                       fit: BoxFit.cover,
-                                      errorWidget: (_, __, ___) =>
+                                      semanticLabel: localized.name,
+                                      placeholderBuilder: (_) =>
                                           const ColoredBox(
+                                        color: AppColors.warmBeigeLight,
+                                      ),
+                                      errorBuilder: (_) => const ColoredBox(
                                         color: AppColors.warmBeige,
                                         child: Icon(
                                           LucideIcons.package,

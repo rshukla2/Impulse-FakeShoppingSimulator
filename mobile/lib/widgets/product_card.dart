@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:impulse/core/icons/app_icons.dart';
 import '../core/theme/app_colors.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
 import '../screens/product/product_detail_screen.dart';
+import 'app_network_image.dart';
 
 class ProductCard extends ConsumerWidget {
   /// Shared grid ratio leaves enough vertical room for a brand, a two-line
@@ -49,10 +49,13 @@ class ProductCard extends ConsumerWidget {
                   aspectRatio: 1.15,
                   child:
                       product.imageUrl != null && product.imageUrl!.isNotEmpty
-                          ? CachedNetworkImage(
+                          ? AppNetworkImage(
                               imageUrl: product.imageUrl!,
+                              cacheWidth: 600,
+                              cacheHeight: 520,
                               fit: BoxFit.cover,
-                              placeholder: (_, __) => Container(
+                              semanticLabel: product.name,
+                              placeholderBuilder: (_) => Container(
                                 color: AppColors.warmBeigeLight,
                                 child: const Center(
                                   child: CircularProgressIndicator(
@@ -61,7 +64,7 @@ class ProductCard extends ConsumerWidget {
                                   ),
                                 ),
                               ),
-                              errorWidget: (_, __, ___) => Container(
+                              errorBuilder: (_) => Container(
                                 color: AppColors.warmBeige,
                                 child: const Icon(
                                   LucideIcons.package,

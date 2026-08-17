@@ -9,7 +9,7 @@ import '../../models/product.dart';
 import '../../providers/catalog_providers.dart';
 import '../../widgets/badge_icon.dart';
 import '../../widgets/product_card.dart';
-import '../../widgets/restaurant_card.dart';
+import '../../widgets/responsive_restaurant_list.dart';
 
 class FoodScreen extends ConsumerStatefulWidget {
   const FoodScreen({super.key});
@@ -154,16 +154,7 @@ class _FoodScreenState extends ConsumerState<FoodScreen> {
                         child: Text('No restaurants in this cuisine yet.'),
                       ),
                     )
-                  : SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) =>
-                              RestaurantCard(restaurant: items[index]),
-                          childCount: items.length,
-                        ),
-                      ),
-                    ),
+                  : ResponsiveRestaurantList(restaurants: items),
               loading: () => const SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.all(24),
@@ -255,17 +246,7 @@ class _FoodScreenState extends ConsumerState<FoodScreen> {
                 ),
               ),
             ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => RestaurantCard(
-                    restaurant: results.restaurants[index],
-                  ),
-                  childCount: results.restaurants.length,
-                ),
-              ),
-            ),
+            ResponsiveRestaurantList(restaurants: results.restaurants),
           ],
           if (results.dishes.isNotEmpty) ...[
             SliverToBoxAdapter(

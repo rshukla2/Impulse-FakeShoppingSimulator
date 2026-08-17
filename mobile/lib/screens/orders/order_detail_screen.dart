@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -6,6 +5,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../models/order.dart';
+import '../../widgets/app_network_image.dart';
 
 class OrderDetailScreen extends StatelessWidget {
   const OrderDetailScreen({super.key, required this.order});
@@ -99,11 +99,16 @@ class OrderDetailScreen extends StatelessWidget {
                                       color: AppColors.forestGreen,
                                     ),
                                   )
-                                : CachedNetworkImage(
+                                : AppNetworkImage(
                                     imageUrl: item.product.imageUrl!,
+                                    cacheWidth: 160,
+                                    cacheHeight: 160,
                                     fit: BoxFit.cover,
-                                    errorWidget: (_, __, ___) =>
-                                        const ColoredBox(
+                                    semanticLabel: item.product.name,
+                                    placeholderBuilder: (_) => const ColoredBox(
+                                      color: AppColors.warmBeigeLight,
+                                    ),
+                                    errorBuilder: (_) => const ColoredBox(
                                       color: AppColors.warmBeige,
                                       child: Icon(
                                         LucideIcons.package,

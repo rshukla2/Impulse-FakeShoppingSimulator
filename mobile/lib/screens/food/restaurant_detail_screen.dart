@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:impulse/core/icons/app_icons.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/restaurant.dart';
 import '../../providers/catalog_providers.dart';
+import '../../widgets/app_network_image.dart';
 import '../../widgets/badge_icon.dart';
 import '../../widgets/product_card.dart';
 
@@ -38,9 +38,16 @@ class RestaurantDetailScreen extends ConsumerWidget {
                     if (restaurant.imageUrl != null)
                       AspectRatio(
                         aspectRatio: 2.2,
-                        child: CachedNetworkImage(
+                        child: AppNetworkImage(
                           imageUrl: restaurant.imageUrl!,
+                          cacheWidth: 1600,
+                          cacheHeight: 800,
                           fit: BoxFit.cover,
+                          semanticLabel: restaurant.name,
+                          placeholderBuilder: (_) =>
+                              const ColoredBox(color: AppColors.warmBeigeLight),
+                          errorBuilder: (_) =>
+                              const ColoredBox(color: AppColors.warmBeige),
                         ),
                       ),
                     Padding(

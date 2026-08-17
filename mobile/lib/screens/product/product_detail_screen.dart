@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:impulse/core/icons/app_icons.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/product.dart';
 import '../../providers/cart_provider.dart';
+import '../../widgets/app_network_image.dart';
 import '../../widgets/badge_icon.dart';
 
 class ProductDetailScreen extends ConsumerWidget {
@@ -107,12 +107,15 @@ class ProductDetailScreen extends ConsumerWidget {
                   aspectRatio: 1.2,
                   child:
                       product.imageUrl != null && product.imageUrl!.isNotEmpty
-                          ? CachedNetworkImage(
+                          ? AppNetworkImage(
                               imageUrl: product.imageUrl!,
+                              cacheWidth: 1400,
+                              cacheHeight: 1200,
                               fit: BoxFit.cover,
-                              placeholder: (_, __) =>
+                              semanticLabel: product.name,
+                              placeholderBuilder: (_) =>
                                   Container(color: AppColors.warmBeigeLight),
-                              errorWidget: (_, __, ___) => Container(
+                              errorBuilder: (_) => Container(
                                 color: AppColors.warmBeige,
                                 child: const Icon(LucideIcons.package,
                                     size: 48, color: AppColors.forestGreen),

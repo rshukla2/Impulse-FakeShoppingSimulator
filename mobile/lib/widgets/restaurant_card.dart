@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:impulse/core/icons/app_icons.dart';
 import '../core/theme/app_colors.dart';
 import '../models/restaurant.dart';
 import '../screens/food/restaurant_detail_screen.dart';
+import 'app_network_image.dart';
 
 class RestaurantCard extends StatelessWidget {
   final Restaurant restaurant;
+  final EdgeInsetsGeometry margin;
 
-  const RestaurantCard({super.key, required this.restaurant});
+  const RestaurantCard({
+    super.key,
+    required this.restaurant,
+    this.margin = const EdgeInsets.only(bottom: 16),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +26,7 @@ class RestaurantCard extends StatelessWidget {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: margin,
         decoration: BoxDecoration(
           color: AppColors.warmBeigeLight,
           borderRadius: BorderRadius.circular(16),
@@ -36,12 +41,15 @@ class RestaurantCard extends StatelessWidget {
                 AspectRatio(
                   aspectRatio: 2.1,
                   child: restaurant.imageUrl != null
-                      ? CachedNetworkImage(
+                      ? AppNetworkImage(
                           imageUrl: restaurant.imageUrl!,
+                          cacheWidth: 960,
+                          cacheHeight: 480,
                           fit: BoxFit.cover,
-                          placeholder: (_, __) =>
+                          semanticLabel: restaurant.name,
+                          placeholderBuilder: (_) =>
                               Container(color: AppColors.warmBeigeLight),
-                          errorWidget: (_, __, ___) =>
+                          errorBuilder: (_) =>
                               Container(color: AppColors.warmBeige),
                         )
                       : Container(color: AppColors.warmBeige),
