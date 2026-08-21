@@ -1,11 +1,33 @@
 import 'package:dio/dio.dart';
 import 'package:impulse/core/network/api_client.dart';
+import 'package:impulse/services/checkout_vault_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 typedef TestRequestHandler = void Function(
   RequestOptions options,
   RequestInterceptorHandler handler,
 );
+
+class MemorySecureStore implements SecureKeyValueStore {
+  MemorySecureStore([Map<String, String>? values])
+      : values = Map<String, String>.from(values ?? const {});
+
+  final Map<String, String> values;
+  Object? readError;
+  Object? writeError;
+
+  @override
+  Future<String?> read(String key) async {
+    if (readError != null) throw readError!;
+    return values[key];
+  }
+
+  @override
+  Future<void> write(String key, String value) async {
+    if (writeError != null) throw writeError!;
+    values[key] = value;
+  }
+}
 
 ApiClient testApiClient(TestRequestHandler onRequest) {
   final client = ApiClient(baseUrl: 'https://impulse.test');

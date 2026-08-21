@@ -11,14 +11,14 @@ void main() {
     );
 
     expect(find.text('Privacy Policy'), findsOneWidget);
-    expect(find.text('Effective date: August 17, 2026'), findsOneWidget);
+    expect(find.text('Effective date: August 18, 2026'), findsOneWidget);
 
     await tester.scrollUntilVisible(
-      find.text('No accounts, payments, or addresses'),
+      find.text('Simulated cards and addresses'),
       500,
       scrollable: find.byType(Scrollable),
     );
-    expect(find.text('No accounts, payments, or addresses'), findsOneWidget);
+    expect(find.text('Simulated cards and addresses'), findsOneWidget);
 
     await tester.scrollUntilVisible(
       find.text('Country and currency selection'),
@@ -43,6 +43,8 @@ void main() {
     expect(html, contains('Rishi Shukla'));
     expect(html, contains('rishishukla2k@gmail.com'));
     expect(html, contains('IP address is not retained'));
+    expect(html, contains('It is not persisted or transmitted'));
+    expect(html, contains('CVVs, are never requested'));
     expect(html, isNot(contains('<script')));
   });
 }

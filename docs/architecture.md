@@ -25,10 +25,15 @@ Flutter owns all user-specific state:
 - combined cart
 - simulated order history
 - lifetime savings and item counts
+- optional masked card profiles and shipping/billing addresses
+- encrypted checkout snapshots for completed simulated orders
 
-SharedPreferences persists this state on each device. The display name is not
-part of backend requests. The same Dart UI and state model serve iOS, Android,
-and Flutter web.
+SharedPreferences persists non-sensitive application state on each device.
+Checkout profiles and snapshots use platform secure storage: Keychain on iOS,
+Keystore-backed encryption on Android, and WebCrypto on HTTPS Flutter web. Full
+card numbers are never persisted, and checkout information is not part of
+backend requests. The same Dart UI and state model serve iOS, Android, and
+Flutter web.
 
 The backend URL is supplied at compile time through `API_BASE_URL`. Safe local
 defaults exist for browser and emulator development; production must inject an

@@ -2,8 +2,9 @@
 
 Impulse is a Flutter application for simulated shopping. Users browse food,
 groceries, general products, and fictional products, place local fake orders,
-and see how much they avoided spending. There are no accounts, payments,
-addresses, or deliveries.
+and see how much they avoided spending. There are no accounts, payments, or
+deliveries. Optional masked card profiles and addresses remain on the device
+for the simulated checkout experience.
 
 ## Supported architecture
 
@@ -251,8 +252,8 @@ cd mobile
 flutter build appbundle --release --dart-define=API_BASE_URL='https://[YOUR_IPV6]'
 ```
 
-No location, camera, contacts, tracking, account, address, or payment
-permissions are requested. App Store/Play metadata, signing credentials,
+No location, camera, contacts, tracking, account, or payment permissions are
+requested. App Store/Play metadata, signing credentials,
 screenshots, review declarations, and store submission remain owner steps.
 
 ## Production troubleshooting
@@ -269,7 +270,10 @@ curl --globoff 'https://[YOUR_IPV6]/health'
 ## Privacy boundary
 
 The entered display name, Login completion, cart, orders, and savings remain in
-Flutter local storage. The display name is not sent to FastAPI. The backend may
+Flutter local storage. Optional addresses, masked card profiles, and checkout
+snapshots use encrypted local storage. Complete card numbers are not persisted
+or transmitted, and card security codes are never requested. None of this local
+profile data is sent to FastAPI. The backend may
 process a public request IP in memory solely to perform a local country lookup;
 the application does not persist or log that IP. Run Uvicorn with access
 logging disabled as shown above so the server does not independently emit raw

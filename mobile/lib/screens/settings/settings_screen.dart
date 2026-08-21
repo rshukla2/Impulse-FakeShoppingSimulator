@@ -7,6 +7,8 @@ import '../../providers/bootstrap_provider.dart';
 import '../../providers/user_provider.dart';
 import '../credits/credits_screen.dart';
 import '../privacy/privacy_policy_screen.dart';
+import 'addresses_screen.dart';
+import 'wallet_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -112,6 +114,56 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 24),
+              const _SectionTitle('Checkout Profiles'),
+              const SizedBox(height: 8),
+              Card(
+                color: AppColors.warmBeigeLight,
+                child: ListTile(
+                  leading: const Icon(
+                    LucideIcons.creditCard,
+                    color: AppColors.forestGreen,
+                  ),
+                  title: const Text(
+                    'Wallet',
+                    style: TextStyle(
+                      color: AppColors.forestGreen,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Manage locally saved simulated cards',
+                  ),
+                  trailing: const Icon(LucideIcons.chevronRight),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const WalletScreen()),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Card(
+                color: AppColors.warmBeigeLight,
+                child: ListTile(
+                  leading: const Icon(
+                    LucideIcons.mapPin,
+                    color: AppColors.forestGreen,
+                  ),
+                  title: const Text(
+                    'Addresses',
+                    style: TextStyle(
+                      color: AppColors.forestGreen,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Manage local shipping and billing addresses',
+                  ),
+                  trailing: const Icon(LucideIcons.chevronRight),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AddressesScreen()),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
               const _SectionTitle('Privacy'),
               const SizedBox(height: 8),
               _sectionCard(
@@ -137,9 +189,10 @@ class SettingsScreen extends ConsumerWidget {
                     SizedBox(height: 10),
                     Text(
                       '• No account or authentication required.\n'
-                      '• No cards, bank details, or payment tokens.\n'
-                      '• No delivery address or GPS permission.\n'
-                      '• Your name, cart, orders, and statistics stay on this device.',
+                      '• Full card numbers are never saved or transmitted.\n'
+                      '• Card security codes are never requested.\n'
+                      '• Saved addresses and masked cards stay on this device.\n'
+                      '• No payment processor, charge, or delivery.',
                       style: TextStyle(
                         color: AppColors.slateGreyDark,
                         fontSize: 12,

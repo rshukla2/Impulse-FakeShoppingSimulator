@@ -76,6 +76,7 @@ def test_backend_models_contain_no_user_or_order_storage():
 def test_mobile_release_declares_only_network_access():
     manifest = (ROOT / "mobile/android/app/src/main/AndroidManifest.xml").read_text(encoding="utf-8")
     assert "android.permission.INTERNET" in manifest
+    assert 'android:allowBackup="false"' in manifest
     assert "android.permission.ACCESS_FINE_LOCATION" not in manifest
     assert "android.permission.CAMERA" not in manifest
     gradle = (ROOT / "mobile/android/app/build.gradle.kts").read_text(encoding="utf-8")
@@ -91,6 +92,8 @@ def test_public_privacy_policy_meets_store_delivery_requirements():
     assert "rishishukla2k@gmail.com" in html
     assert "does not collect or store personal information in a user database" in html
     assert "IP address is not retained" in html
+    assert "It is not persisted or transmitted" in html
+    assert "CVVs, are never requested" in html
     assert "clear the app's storage" in html
     assert "<script" not in html
 

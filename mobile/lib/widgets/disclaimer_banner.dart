@@ -22,7 +22,7 @@ class DisclaimerBanner extends StatelessWidget {
           SizedBox(width: 10),
           Expanded(
             child: Text(
-              'This is a fake shopping experience. Nothing in your cart will actually be purchased or delivered. You will not be charged.',
+              'This is a fake shopping experience. Nothing in your cart will actually be purchased or delivered. You will not be charged. Saved masked card details and addresses remain only on this device.',
               style: TextStyle(
                 color: AppColors.slateGreyDark,
                 fontSize: 12,

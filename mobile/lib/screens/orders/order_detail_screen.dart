@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../models/order.dart';
+import '../../providers/checkout_profiles_provider.dart';
 import '../../widgets/app_network_image.dart';
 
-class OrderDetailScreen extends StatelessWidget {
+class OrderDetailScreen extends ConsumerWidget {
   const OrderDetailScreen({super.key, required this.order});
 
   final SimulatedOrder order;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final snapshot =
+        ref.watch(checkoutProfilesProvider).data.orderSnapshots[order.id];
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(title: const Text('Order Details')),
@@ -145,6 +149,54 @@ class OrderDetailScreen extends StatelessWidget {
                   ),
                 );
               }),
+              if (snapshot != null) ...[
+                const SizedBox(height: 8),
+                Card(
+                  color: AppColors.warmBeigeLight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Checkout Details',
+                          style: TextStyle(
+                            color: AppColors.forestGreen,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Icon(
+                              LucideIcons.creditCard,
+                              color: AppColors.forestGreen,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(snapshot.card.maskedNumber),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        const Text(
+                          'Shipping Address',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                            snapshot.shippingAddress.formattedLines.join('\n')),
+                        if (!snapshot.billingMatchesShipping) ...[
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Billing Address',
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          Text(snapshot.billingAddress.formattedLines
+                              .join('\n')),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
               const Divider(height: 32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

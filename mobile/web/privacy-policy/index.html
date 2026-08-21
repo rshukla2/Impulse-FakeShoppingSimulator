@@ -138,7 +138,7 @@
 
   <main>
     <h1>Privacy Policy</h1>
-    <p class="effective-date">Effective date: August 17, 2026</p>
+    <p class="effective-date">Effective date: August 18, 2026</p>
 
     <p class="summary"><strong>Impulse does not create user accounts and does not collect or store personal information in a user database.</strong> Impulse does not sell, rent, or use personal information for advertising. The app is a shopping simulator and does not process purchases, payments, or deliveries.</p>
 
@@ -151,11 +151,13 @@
       <li>The display name you choose to enter.</li>
       <li>Your cart, simulated order history, and savings statistics.</li>
       <li>Your onboarding status and the last country, currency, and exchange-rate response used by the app.</li>
+      <li>If you choose to add checkout profiles: cardholder names, card network, last four digits, expiration dates, shipping and billing addresses, profile defaults, and completed-order checkout snapshots.</li>
     </ul>
-    <p>This local information is not sent to Impulse or stored in an Impulse user database. It remains on your device until you clear the app's storage, clear the site's local data, or uninstall the app.</p>
+    <p>Checkout profiles and checkout snapshots are stored in encrypted local storage. This information is not sent to Impulse or stored in an Impulse user database. It remains on your device until you clear the app's storage, clear the site's local data, or uninstall the app.</p>
 
-    <h2>No accounts, payments, or addresses</h2>
-    <p>Impulse does not require or provide user accounts or authentication. The app does not request or provide fields for passwords, email addresses, phone numbers, delivery addresses, card numbers, bank information, or payment details. Impulse does not integrate with a payment processor.</p>
+    <h2>Simulated cards and addresses</h2>
+    <p>Impulse does not require or provide user accounts or authentication. During simulated checkout, you may enter a cardholder name, card number, expiration date, and shipping or billing address. The complete card number is used only on that form to derive the card network and last four digits. It is not persisted or transmitted. Card security codes, including CVVs, are never requested.</p>
+    <p>Impulse does not integrate with a payment processor, authorize a card, make a charge, complete a purchase, or arrange a delivery.</p>
 
     <h2>Country and currency selection</h2>
     <p>When the app contacts the Impulse catalog service, the service temporarily processes the connection's IP address to infer a country and select an appropriate currency. This lookup does not use GPS. The IP address is not retained in the Impulse database or application logs and is not associated with a user profile.</p>
@@ -170,7 +172,7 @@
     <p>The Android app uses internet access to retrieve catalog information, images, country and currency information, and exchange rates. It does not request access to GPS location, contacts, camera, microphone, photos, or shared device storage.</p>
 
     <h2>Security, retention, and deletion</h2>
-    <p>Connections to the Impulse backend use HTTPS. Because Impulse does not create accounts or store personal information on its servers, there is no server-side personal profile to retain or delete. You can delete locally stored information by clearing the app's storage, clearing the website's local data, or uninstalling the app.</p>
+    <p>Connections to the Impulse backend use HTTPS. Deleting a reusable card or address does not remove the masked card and address snapshot attached to an older simulated order. Because Impulse does not create accounts or store this information on its servers, there is no server-side personal profile to retain or delete. You can delete all locally stored information by clearing the app's storage, clearing the website's local data, or uninstalling the app.</p>
 
     <h2>Changes to this policy</h2>
     <p>If the app's data practices change, this policy and the relevant app-store disclosures will be updated before those changes are released. The effective date at the top of this page identifies the latest version.</p>

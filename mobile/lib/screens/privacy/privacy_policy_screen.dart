@@ -17,7 +17,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             children: const [
               Text(
-                'Effective date: August 17, 2026',
+                'Effective date: August 18, 2026',
                 style: TextStyle(color: AppColors.slateGrey),
               ),
               SizedBox(height: 18),
@@ -30,12 +30,12 @@ class PrivacyPolicyScreen extends StatelessWidget {
               _PolicySection(
                 title: 'Information stored on your device',
                 body:
-                    'The display name you enter, your cart, order history, savings statistics, onboarding status, and the last country and currency response are stored only in local application storage on your device. This information is not sent to Impulse or stored in an Impulse user database.',
+                    'The display name you enter, your cart, order history, savings statistics, onboarding status, and the last country and currency response are stored only in local application storage on your device. If you choose to add checkout profiles, cardholder names, masked card details, addresses, defaults, and completed-order checkout snapshots are stored in encrypted local storage. This information is not sent to Impulse or stored in an Impulse user database.',
               ),
               _PolicySection(
-                title: 'No accounts, payments, or addresses',
+                title: 'Simulated cards and addresses',
                 body:
-                    'Impulse does not require or provide user accounts or authentication. The app does not request or provide fields for passwords, email addresses, phone numbers, delivery addresses, card numbers, bank information, or payment details. Impulse does not integrate with a payment processor.',
+                    'Impulse does not require user accounts or authentication. During simulated checkout, you may enter a cardholder name, card number, expiration date, and shipping or billing address. The complete card number is used only on that form to derive the card network and last four digits; it is not persisted or transmitted. Card security codes are never requested. Impulse does not integrate with a payment processor, authorize a card, make a charge, complete a purchase, or arrange a delivery.',
               ),
               _PolicySection(
                 title: 'Country and currency selection',
@@ -60,7 +60,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               _PolicySection(
                 title: 'Security, retention, and deletion',
                 body:
-                    "Connections to the Impulse backend use HTTPS. Because Impulse does not create accounts or store personal information on its servers, there is no server-side personal profile to retain or delete. You can delete locally stored information by clearing the app's storage, clearing the website's local data, or uninstalling the app.",
+                    "Checkout profiles and checkout snapshots are kept in encrypted local storage. Deleting a reusable card or address does not remove the masked card and address snapshot attached to an older simulated order. Because Impulse does not create accounts or store this information on its servers, there is no server-side personal profile to retain or delete. You can delete all locally stored information by clearing the app's storage, clearing the website's local data, or uninstalling the app.",
               ),
               _PolicySection(
                 title: 'Changes to this policy',
