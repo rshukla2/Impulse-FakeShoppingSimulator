@@ -44,7 +44,7 @@ class CreditsScreen extends StatelessWidget {
             title: 'Frankfurter API',
             license: 'Open Reference Rates by European Central Bank',
             description:
-                'Real-time and cached currency exchange rates used for accurate local price conversion without tracking user coordinates.',
+                'ECB reference exchange rates (snapshot from November 2026) used to convert demo prices into local currencies.',
             icon: LucideIcons.coins,
           ),
           const SizedBox(height: 14),

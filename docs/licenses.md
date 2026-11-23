@@ -4,6 +4,8 @@ Impulse is committed to ethical open-source attribution and licensing compliance
 
 ## Third-Party Data & Image Licenses
 
+The demo ships a one-time snapshot (November 2026) of data originally collected from the sources below. No external API is called at runtime; product images are loaded from their original hosts.
+
 1. **Wikimedia Commons & Wikidata**
    - **Content**: Cuisines, dish metadata, and food photography.
    - **Licenses**: The synchronizer accepts only Public Domain, CC0, CC BY, and CC BY-SA images and stores the exact license URL and creator attribution.
@@ -27,11 +29,6 @@ Impulse is committed to ethical open-source attribution and licensing compliance
 
 5. **Photographs & Media**
    - Sample preview assets and fictional product placeholders courtesy of Unsplash photography under the Unsplash License (free for commercial and non-commercial use).
-
-6. **MaxMind GeoLite2 Country**
-   - **Content**: Local IP-to-country lookup data downloaded by the operator; no database is committed to this repository.
-   - **License**: Creative Commons Attribution-ShareAlike 4.0 International, subject to MaxMind's GeoLite2 terms and update requirements.
-   - **Source**: [MaxMind GeoLite2](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data/).
 
 ## Application License
 

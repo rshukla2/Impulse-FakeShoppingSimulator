@@ -11,7 +11,7 @@ void main() {
     );
 
     expect(find.text('Privacy Policy'), findsOneWidget);
-    expect(find.text('Effective date: August 18, 2026'), findsOneWidget);
+    expect(find.text('Effective date: November 23, 2026'), findsOneWidget);
 
     await tester.scrollUntilVisible(
       find.text('Simulated cards and addresses'),
@@ -42,7 +42,7 @@ void main() {
     expect(html, contains('<title>Privacy Policy | Impulse</title>'));
     expect(html, contains('Rishi Shukla'));
     expect(html, contains('rishishukla2k@gmail.com'));
-    expect(html, contains('IP address is not retained'));
+    expect(html, contains('does not contact any Impulse server'));
     expect(html, contains('It is not persisted or transmitted'));
     expect(html, contains('CVVs, are never requested'));
     expect(html, isNot(contains('<script')));

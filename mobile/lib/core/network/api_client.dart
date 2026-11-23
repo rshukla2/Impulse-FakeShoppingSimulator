@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import '../constants/api_constants.dart';
+import 'static_demo_interceptor.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -15,7 +16,10 @@ class ApiClient {
               'Accept': 'application/json',
             },
           ),
-        );
+        ) {
+    // Tests pass their own baseUrl and stub requests themselves.
+    if (baseUrl == null) _dio.interceptors.add(StaticDemoInterceptor());
+  }
 
   Dio get dio => _dio;
 

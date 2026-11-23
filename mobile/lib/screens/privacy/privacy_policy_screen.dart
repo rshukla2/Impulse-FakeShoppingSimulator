@@ -17,7 +17,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             children: const [
               Text(
-                'Effective date: August 18, 2026',
+                'Effective date: November 23, 2026',
                 style: TextStyle(color: AppColors.slateGrey),
               ),
               SizedBox(height: 18),
@@ -40,7 +40,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               _PolicySection(
                 title: 'Country and currency selection',
                 body:
-                    "When the app contacts the Impulse catalog service, the service temporarily processes the connection's IP address to infer a country and select an appropriate currency. This lookup does not use GPS. The IP address is not retained in the Impulse database or application logs and is not associated with a user profile.",
+                    "Impulse runs entirely on your device as a demo. It does not contact any Impulse server and does not detect your location. Product images load directly from their public hosts (such as Wikimedia, Open Food Facts, Icecat and Unsplash), which receive your IP address as with any website. Prices default to US dollars, and you can pick another country in Settings.",
               ),
               _PolicySection(
                 title: 'Catalog requests and images',
@@ -60,7 +60,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
               _PolicySection(
                 title: 'Security, retention, and deletion',
                 body:
-                    "Checkout profiles and checkout snapshots are kept in encrypted local storage. Deleting a reusable card or address does not remove the masked card and address snapshot attached to an older simulated order. Because Impulse does not create accounts or store this information on its servers, there is no server-side personal profile to retain or delete. You can delete all locally stored information by clearing the app's storage, clearing the website's local data, or uninstalling the app.",
+                    "Checkout profiles and checkout snapshots are kept in encrypted local storage. Deleting a reusable card or address does not remove the masked card and address snapshot attached to an older simulated order. Because Impulse does not create accounts or have any servers, there is no server-side personal profile to retain or delete. You can delete all locally stored information by clearing the app's storage, clearing the website's local data, or uninstalling the app.",
               ),
               _PolicySection(
                 title: 'Changes to this policy',

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:impulse/core/icons/app_icons.dart';
-import '../../core/constants/api_constants.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../providers/user_provider.dart';
@@ -57,7 +56,7 @@ class HomeScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (ApiConstants.isDeploymentPreview) ...[
+            ...[
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(14),
@@ -77,7 +76,7 @@ class HomeScreen extends ConsumerWidget {
                     SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Deployment preview: the catalog service is being connected. Login, Home, and navigation are ready; live catalogs will appear after the API is deployed.',
+                        'Portfolio demo: this is a frozen snapshot of the catalog, running entirely in your browser. Nothing is real, and no orders or payments are processed.',
                         style: TextStyle(
                           color: AppColors.slateGreyDark,
                           fontSize: 12,

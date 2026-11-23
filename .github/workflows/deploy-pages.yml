@@ -46,25 +46,9 @@ jobs:
 
       - name: Build Flutter web
         working-directory: mobile
-        env:
-          CONFIGURED_API_BASE_URL: ${{ vars.API_BASE_URL }}
         run: |
-          api_base_url="$CONFIGURED_API_BASE_URL"
-          preview_mode=false
-
-          if [ -z "$api_base_url" ]; then
-            api_base_url="https://api.example.invalid"
-            preview_mode=true
-            echo "::warning::API_BASE_URL is not configured. Publishing the frontend in deployment-preview mode."
-          elif [[ "$api_base_url" != https://* ]]; then
-            echo "::error::API_BASE_URL must be an HTTPS URL for GitHub Pages."
-            exit 1
-          fi
-
           flutter build web --release \
-            --base-href "/${{ github.event.repository.name }}/" \
-            --dart-define="API_BASE_URL=$api_base_url" \
-            --dart-define="DEPLOYMENT_PREVIEW=$preview_mode"
+            --base-href "/${{ github.event.repository.name }}/"
 
           test -f build/web/privacy-policy/index.html
 
